@@ -23,16 +23,11 @@ export async function getMongoClient(): Promise<MongoClient> {
 	return clientPromise;
 }
 
-export async function getDb(dbName = defaultDbName) {
+export async function getDb(dbName?: string) {
 	const client = await getMongoClient();
+	const resolvedName = dbName ?? defaultDbName;
 
-	if (!dbName) {
-		throw new Error(
-			"Provide a database name or define MONGODB_DB in .env.local"
-		);
-	}
-
-	return client.db(dbName);
+	return resolvedName ? client.db(resolvedName) : client.db();
 }
 
 export type { MongoClient };

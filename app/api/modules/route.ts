@@ -5,7 +5,7 @@ import { getDb } from "../lib/mongodb";
 export async function GET() {
 	try {
 		const db = await getDb();
-		const modules = await db.collection("modules").find({}).toArray();
+		const modules = await db.collection("Modules").find({}).toArray();
 
 		return NextResponse.json({ modules });
 	} catch (error) {
