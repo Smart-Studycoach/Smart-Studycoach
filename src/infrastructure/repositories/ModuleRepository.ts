@@ -8,11 +8,18 @@ import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
 export class ModuleRepository implements IModuleRepository {
   private mapToEntity(doc: IModuleDocument): Module {
     return {
-      id: doc._id.toString(),
+      _id: doc._id.toString(),
+      id: doc.id,
       name: doc.name,
+      shortdescription: doc.shortdescription,
       description: doc.description,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
+      studycredit: doc.studycredit,
+      location: doc.location,
+      level: doc.level,
+      learningoutcomes: doc.learningoutcomes,
+      estimated_difficulty: doc.estimated_difficulty,
+      available_spots: doc.available_spots,
+      start_date: doc.start_date,
     };
   }
 

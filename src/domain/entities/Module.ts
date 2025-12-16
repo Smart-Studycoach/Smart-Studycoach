@@ -1,9 +1,16 @@
 // Domain Entity - Pure business object with no external dependencies
 
 export interface Module {
-  id: string;
+  _id: string;
+  id: number;
   name: string;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  shortdescription: string[];
+  description: string;
+  studycredit: number;
+  location: string[];
+  level: string;
+  learningoutcomes: string;
+  estimated_difficulty: number;
+  available_spots: number;
+  start_date: string;
 }
