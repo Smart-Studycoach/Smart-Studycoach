@@ -26,7 +26,7 @@ export default function RootLayout({
             </nav>
 
             <div className="user-actions">
-              <a href="/modules" className="nav-link active">Login</a>
+              <a href="/login" className="login-btn">Login</a>
             </div>
           </div>
         </header>

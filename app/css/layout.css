@@ -37,7 +37,7 @@ body {
     background-color: #323333;
     border-radius: 25px;
     align-items: center;
-    gap: 0;
+    gap: 10;
     padding: 0.3rem;
     display: flex;
     padding-left: 20px;
@@ -83,6 +83,31 @@ body {
   height: 40px;
   border-radius: 50%;
   background-color: #fff;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.login-btn {
+  background-color: #C6002A;
+  color: #FFFFFF;
+  text-decoration: none;
+  padding: 0.75rem 2.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #C6002A;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(227, 28, 28, 0.3);
 }
 
 .main-content {
