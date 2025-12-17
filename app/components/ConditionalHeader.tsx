@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 export function ConditionalHeader() {
   const pathname = usePathname();
   
-  // Hide header on login page
-  if (pathname === '/login') {
+  // Hide header on login and register pages
+  if (pathname === '/login' || pathname === '/register') {
     return null;
   }
 
