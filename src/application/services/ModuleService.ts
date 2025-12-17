@@ -9,4 +9,8 @@ export class ModuleService {
   async getAllModules(): Promise<Module[]> {
     return this.moduleRepository.findAll();
   }
+
+  async getModuleById(id: string): Promise<Module | null> {
+    return this.moduleRepository.findById(id);
+  }
 }
