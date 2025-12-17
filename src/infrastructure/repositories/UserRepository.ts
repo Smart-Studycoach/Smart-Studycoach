@@ -36,6 +36,17 @@ export class UserRepository implements IUserRepository {
     return this.mapToEntity(doc as IUserDocument);
   }
 
+  async delete(id: string): Promise<boolean> {
+    try {
+        await connectToDatabase();
+        const result = await UserModel.deleteOne({ _id: id });
+        return result.deletedCount === 1;
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return false;
+    }
+  }
+
   async existsByEmail(email: string): Promise<boolean> {
     await connectToDatabase();
     const count = await UserModel.countDocuments({

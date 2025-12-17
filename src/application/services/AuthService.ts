@@ -61,6 +61,10 @@ export class AuthApplicationService {
     return this.sanitizeUser(user);
   }
 
+  async deleteUser(userId: string): Promise<boolean> {
+    return await this.userRepository.delete(userId);
+  }
+
   private sanitizeUser(user: User): Omit<User, "password"> {
     const { password, ...sanitizedUser } = user;
     return sanitizedUser;
