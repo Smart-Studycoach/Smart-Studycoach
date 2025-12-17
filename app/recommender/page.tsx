@@ -37,12 +37,12 @@ export default function RecommenderPage() {
 
             <label className="flex gap-2">
               <input type="radio" name="level" value="NLQF5" />
-              NLQF 5
+              NLQF5
             </label>
 
             <label className="flex gap-2">
               <input type="radio" name="level" value="NLQF6" />
-              NLQF 6
+              NLQF6
             </label>
           </fieldset>
         </form>

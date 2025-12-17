@@ -1,7 +1,8 @@
 "use server";
 
 import { recommendationService } from "@/infrastructure/container";
-import { RecommendationDto } from "@/infrastructure/dto/RecommendationDto";
+import { RecommendationDto } from "@/src/application/dto/RecommendationDto";
+import { RecommendationMapper } from "@/infrastructure/mappers/RecommendationMapper";
 
 export async function submitRecommendation(
   _: RecommendationDto[] | null,
@@ -16,13 +17,5 @@ export async function submitRecommendation(
     level
   );
 
-  // nog een mapper maken voor het reverse?
-  return recommendations.map((r) => ({
-    module_id: r.moduleId,
-    module_name: r.moduleName,
-    score: r.score,
-    location: r.location,
-    level: r.level,
-    waarom_match: r.reason,
-  }));
+  return RecommendationMapper.toApplicationList(recommendations);
 }
