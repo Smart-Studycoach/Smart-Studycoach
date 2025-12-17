@@ -2,7 +2,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IAuthService } from "@/domain";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key-change-in-production";
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable must be set");
+}
+const JWT_SECRET = process.env.JWT_SECRET as string;
 const JWT_EXPIRES_IN = "7d";
 const SALT_ROUNDS = 12;
 
