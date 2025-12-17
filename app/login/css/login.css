@@ -1,0 +1,123 @@
+.login-container {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #131313;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative red squares */
+.login-container::before,
+.login-container::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-color: #C6002A;
+    border-radius: 20px;
+}
+
+.login-container::before {
+    top: 0%;
+    left: 25%;
+
+}
+
+.login-container::after {
+    top: 70%;
+    right: 25%;
+}
+
+.login-form-wrapper {
+    z-index: 1;
+    background-color: #323333;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    padding: 30px 40px;
+    position: relative;
+    box-shadow: 0 20px 60px #00000080;
+}
+
+.login-title {
+    color: #C6002A;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 16px 24px;
+    background-color: #4a4a4a;
+    border: none;
+    border-radius: 30px;
+    color: #FFFFFF;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.form-group input::placeholder {
+    color: #999999;
+}
+
+.form-group input:focus {
+    background-color: #555555;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.register-link a {
+    color: #999999;
+    text-decoration: underline;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+    color: #C6002A;
+}
+
+.login-button {
+    width: 100%;
+    padding: 16px;
+    background-color: #C6002A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #a00022;
+    transform: translateY(-2px);
+}
+
+.login-button:active {
+    transform: translateY(0);
+}
