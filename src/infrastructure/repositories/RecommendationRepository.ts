@@ -3,7 +3,7 @@
 
 import { Recommendation, IRecommendationRepository } from "@/domain";
 import { RecommendationMapper } from "../mappers/RecommendationMapper";
-import { RecommendationDto } from "../dto/RecommendationDTO";
+import { RecommendationDto } from "../dto/RecommendationDto";
 
 export class RecommendationRepository implements IRecommendationRepository {
   async RecommendCourses(

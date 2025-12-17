@@ -1,7 +1,7 @@
 "use server";
 
 import { recommendationService } from "@/infrastructure/container";
-import { RecommendationDto } from "@/infrastructure/dto/RecommendationDTO";
+import { RecommendationDto } from "@/infrastructure/dto/RecommendationDto";
 
 export async function submitRecommendation(
   _: RecommendationDto[] | null,

@@ -1,6 +1,6 @@
 // infrastructure/mappers/RecommendationMapper.ts
 import { Recommendation } from "@/domain";
-import { RecommendationDto } from "../dto/RecommendationDTO";
+import { RecommendationDto } from "../dto/RecommendationDto";
 
 export class RecommendationMapper {
   static toDomain(dto: RecommendationDto): Recommendation {
