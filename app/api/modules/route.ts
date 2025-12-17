@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { moduleService } from "@/infrastructure/container";
 
+// de validatie logica eigenlijk niet in de route.ts
 export async function GET() {
   try {
     const modules = await moduleService.getAllModules();
