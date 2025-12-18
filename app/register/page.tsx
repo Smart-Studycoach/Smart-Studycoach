@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/services/auth";
 import "./css/login.css";
 
 export default function Register() {
@@ -72,36 +73,16 @@ export default function Register() {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email,
-                    name,
-                    password,
-                    studentProfile,
-                }),
+            const authResponse = await authService.register({
+                email,
+                name,
+                password,
+                studentProfile,
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.error || "Registratie mislukt");
-                setLoading(false);
-                return;
-            }
-
-            // Store token in localStorage
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            // Redirect to home or dashboard
+            authService.storeAuth(authResponse);
             router.push("/");
         } catch (err) {
-            setError("Er is iets misgegaan. Probeer het opnieuw.");
-            console.error("Registration error:", err);
+            setError(err instanceof Error ? err.message : "Er is iets misgegaan. Probeer het opnieuw.");
             setLoading(false);
         }
     };

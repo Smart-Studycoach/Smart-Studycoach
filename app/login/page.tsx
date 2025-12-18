@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/services/auth";
 import "./css/login.css";
 
 export default function Login() {
@@ -17,31 +18,11 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.error || "Login failed");
-                setLoading(false);
-                return;
-            }
-
-            // Store token in localStorage
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            // Redirect to home or dashboard
+            const authResponse = await authService.login({ email, password });
+            authService.storeAuth(authResponse);
             router.push("/");
         } catch (err) {
-            setError("Er is iets misgegaan. Probeer het opnieuw.");
-            console.error("Login error:", err);
+            setError(err instanceof Error ? err.message : "Er is iets misgegaan. Probeer het opnieuw.");
             setLoading(false);
         }
     };

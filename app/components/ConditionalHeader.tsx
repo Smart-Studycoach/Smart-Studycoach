@@ -1,30 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { authService } from '@/lib/services/auth';
+import type { User } from '@/lib/types/auth';
 
 export function ConditionalHeader() {
   const pathname = usePathname();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
-  
-  useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Failed to parse user data:', error);
-      }
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    window.location.href = '/login';
-  };
+  const [user] = useState<User | null>(() => authService.getUser());
   
   // Hide header on login and register pages
   if (pathname === '/login' || pathname === '/register') {
@@ -45,8 +28,15 @@ export function ConditionalHeader() {
 
           <div className="user-actions nav">
             {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <a href="/account" className="nav-link">{user.name}</a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}> 
+                <a href="/account" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {user.name}
+                <img 
+                  src={`https://api.dicebear.com/9.x/miniavs/svg?seed=${encodeURIComponent(user._id)}`}
+                  alt={user.name}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                />
+                </a>
               </div>
             ) : (
               <a href="/login" className="login-btn">Login</a>
