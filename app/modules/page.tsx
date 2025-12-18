@@ -1,5 +1,6 @@
 import { ModuleCard } from "@/components/ModuleCard";
 import { ModulePagination } from "@/components/ModulePagination";
+import { ModuleFilters } from "@/components/ModuleFilters";
 import { Module } from "@/domain/entities/Module";
 
 const ITEMS_PER_PAGE = 20;
@@ -32,6 +33,15 @@ export default async function Index({
   const currentPage = Number(params?.page) || 1;
   const totalPages = Math.ceil(modules.length / ITEMS_PER_PAGE);
   
+  // Extract unique filter options from modules
+  const levels = Array.from(new Set(modules.map((m) => m.level))).filter(Boolean);
+  const studyCredits = Array.from(
+    new Set(modules.map((m) => String(m.studycredit)))
+  ).filter(Boolean);
+  const locations = Array.from(
+    new Set(modules.flatMap((m) => m.location || []))
+  ).filter(Boolean);
+  
   // Calculate pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -43,9 +53,17 @@ export default async function Index({
         <h1 className="text-4xl font-bold mb-4 text-foreground">
           Welkom bij de modules
         </h1>
-        <p className="text-lg text-muted-foreground mb-6">
+        <p className="text-lg text-muted-foreground mb-8">
           Toont {startIndex + 1} - {Math.min(endIndex, modules.length)} van {modules.length} modules
         </p>
+        
+        {/* Filters */}
+        <ModuleFilters
+          levels={levels}
+          studyCredits={studyCredits}
+          locations={locations}
+          difficulties={[]}
+        />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
           {paginatedModules.length > 0 ? (
