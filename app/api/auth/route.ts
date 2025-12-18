@@ -1,30 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authApplicationService, authService } from "@/infrastructure/container";
+import { authApplicationService } from "@/infrastructure/container";
+import { getUserIdFromRequest } from "@/infrastructure/utils/auth";
 
 export async function GET(request: NextRequest) {
   try {
-    // Get token from Authorization header
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const authResult = getUserIdFromRequest(request);
+    if ("error" in authResult) {
       return NextResponse.json(
-        { error: "No token provided" },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
-
-    // Verify token
-    const decoded = authService.verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
+        {
+          error:
+            authResult.error === "no-token"
+              ? "No token provided"
+              : "Invalid or expired token",
+        },
         { status: 401 }
       );
     }
 
     // Get current user
-    const user = await authApplicationService.getCurrentUser(decoded.userId);
+    const user = await authApplicationService.getCurrentUser(authResult.userId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -32,38 +26,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Get current user failed:", error);
-    return NextResponse.json(
-      { error: "Failed to get user" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to get user" }, { status: 500 });
   }
 }
 
 // Delete user
 export async function DELETE(request: NextRequest) {
   try {
-    // Get token from Authorization header
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const authResult = getUserIdFromRequest(request);
+    if ("error" in authResult) {
       return NextResponse.json(
-        { error: "No token provided" },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
-
-    // Verify token
-    const decoded = authService.verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
+        {
+          error:
+            authResult.error === "no-token"
+              ? "No token provided"
+              : "Invalid or expired token",
+        },
         { status: 401 }
       );
     }
 
     // Delete user
-    const success = await authApplicationService.deleteUser(decoded.userId);
+    const success = await authApplicationService.deleteUser(authResult.userId);
     if (!success) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
