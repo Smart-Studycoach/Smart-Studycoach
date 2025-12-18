@@ -34,24 +34,43 @@ body {
 }
 
 .nav {
-    background-color: #323333;
-    border-radius: 25px;
+background-color: rgb(50, 51, 51);
     align-items: center;
-    gap: 10;
-    padding: 0.3rem;
     display: flex;
-    padding-left: 20px;
-    padding-right: 20px;
+    border-radius: 25px;
+    gap: 10px;
+}
+.nav-link-profile
+{
+    color: #fff;
+    border-radius: 25px;
+    padding: .75rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .3s;
+        margin: 0.10rem 0.30rem;
+}
+
+.nav-link-profile:hover {
+  background-color: #ffffff;
+  color: #000000
+}
+
+.nav-link-profile.active {
+  background-color: #fff;
+  color: #000;
 }
 
 .nav-link {
-  color: #FFFFFF;
-  text-decoration: none;
-  padding: 0.75rem 2rem;
-  border-radius: 25px;
-  transition: all 0.3s;
-  font-size: 1rem;
-  font-weight: 700;
+    color: #fff;
+    border-radius: 25px;
+    padding: .75rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .3s;
+    margin: 0.30rem;
 }
 
 .nav-link:hover {

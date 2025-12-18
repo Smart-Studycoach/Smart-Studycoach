@@ -29,7 +29,7 @@ export function ConditionalHeader() {
           <div className="user-actions nav">
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}> 
-                <a href="/account" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <a href="/account" className="nav-link-profile" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {user.name}
                 <img 
                   src={`https://api.dicebear.com/9.x/miniavs/svg?seed=${encodeURIComponent(user._id)}`}
