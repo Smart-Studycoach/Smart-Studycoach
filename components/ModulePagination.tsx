@@ -1,15 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 
 interface ModulePaginationProps {
   currentPage: number;
@@ -73,50 +64,51 @@ export function ModulePagination({
   if (totalPages <= 1) return null;
 
   return (
-    <Pagination className="mt-8">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-            className={
-              currentPage === 1
-                ? "pointer-events-none opacity-50"
-                : "cursor-pointer"
-            }
-          />
-        </PaginationItem>
+    <div className="mt-8 flex justify-center">
+      <div className="flex items-center gap-2">
+        {/* Previous Button */}
+        <button
+          onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-[#323333] text-white rounded-lg font-semibold hover:bg-zinc-800/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Vorige
+        </button>
 
-        {getPageNumbers().map((pageNum, index) =>
-          pageNum === "ellipsis" ? (
-            <PaginationItem key={`ellipsis-${index}`}>
-              <PaginationEllipsis />
-            </PaginationItem>
-          ) : (
-            <PaginationItem key={pageNum}>
-              <PaginationLink
+        {/* Page Numbers */}
+        <div className="flex items-center gap-1">
+          {getPageNumbers().map((pageNum, index) =>
+            pageNum === "ellipsis" ? (
+              <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-400">
+                ...
+              </span>
+            ) : (
+              <button
+                key={pageNum}
                 onClick={() => handlePageChange(pageNum)}
-                isActive={currentPage === pageNum}
-                className="cursor-pointer"
+                className={`w-10 h-10 rounded-lg font-bold transition-colors ${
+                  currentPage === pageNum
+                    ? "bg-[#C6002A] text-white"
+                    : "bg-[#323333] text-white hover:bg-zinc-800/70"
+                }`}
               >
                 {pageNum}
-              </PaginationLink>
-            </PaginationItem>
-          )
-        )}
+              </button>
+            )
+          )}
+        </div>
 
-        <PaginationItem>
-          <PaginationNext
-            onClick={() =>
-              currentPage < totalPages && handlePageChange(currentPage + 1)
-            }
-            className={
-              currentPage === totalPages
-                ? "pointer-events-none opacity-50"
-                : "cursor-pointer"
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+        {/* Next Button */}
+        <button
+          onClick={() =>
+            currentPage < totalPages && handlePageChange(currentPage + 1)
+          }
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-[#323333] text-white rounded-lg font-semibold hover:bg-zinc-800/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Volgende
+        </button>
+      </div>
+    </div>
   );
 }

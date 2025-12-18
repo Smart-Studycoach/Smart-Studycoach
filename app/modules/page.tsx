@@ -25,10 +25,11 @@ async function getModules(): Promise<Module[]> {
 export default async function Index({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
+  const params = await searchParams;
   const modules = await getModules();
-  const currentPage = Number(searchParams.page) || 1;
+  const currentPage = Number(params?.page) || 1;
   const totalPages = Math.ceil(modules.length / ITEMS_PER_PAGE);
   
   // Calculate pagination
