@@ -3,10 +3,11 @@ import { moduleService } from "@/infrastructure/container";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const module = await moduleService.getModuleById(params.id);
+    const { id } = await params;
+    const module = await moduleService.getModuleById(id);
 
     if (!module) {
       return NextResponse.json(
