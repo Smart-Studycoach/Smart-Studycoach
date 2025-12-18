@@ -57,10 +57,11 @@ Register a new user account.
 ```
 
 **Password Requirements:**
+
 - Minimum 12 characters
 - At least one uppercase letter
 - At least one number
-- At least one special character (!@#$%^&*(),.?":{}|<>)
+- At least one special character (!@#$%^&\*(),.?":{}|<>)
 
 **Response:** `201 Created`
 

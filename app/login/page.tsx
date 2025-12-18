@@ -1,38 +1,100 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import "./css/login.css";
 
-export const metadata: Metadata = {
-    title: "Login - AVANS Smart Studycoach",
-    description: "Login to access your Smart Study Coach account",
-};
-
 export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Login failed");
+                setLoading(false);
+                return;
+            }
+
+            // Store token in localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Redirect to home or dashboard
+            router.push("/");
+        } catch (err) {
+            setError("Er is iets misgegaan. Probeer het opnieuw.");
+            console.error("Login error:", err);
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="login-container">
             <div className="login-form-wrapper">
                 <h1 className="login-title">Login</h1>
-                <form className="login-form">
+                <form className="login-form" onSubmit={handleSubmit}>
+                    {error && (
+                        <div style={{ 
+                            color: "red", 
+                            marginBottom: "1rem",
+                            padding: "0.5rem",
+                            backgroundColor: "#ffebee",
+                            borderRadius: "4px"
+                        }}>
+                            {error}
+                        </div>
+                    )}
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
                             placeholder="mail@gmail.com"
-                            required 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            disabled={loading}
                         />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Wachtwoord</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
                             placeholder="*****"
-                            required 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            disabled={loading}
                         />
                     </div>
-                    <button type="submit" className="login-button">Login</button>
+                    <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={loading}
+                    >
+                        {loading ? "Inloggen..." : "Login"}
+                    </button>
                     <div className="register-link">
                         <a href="/register">Of registreer</a>
                     </div>
