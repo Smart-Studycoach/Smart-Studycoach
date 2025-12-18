@@ -9,6 +9,7 @@ export class UserRepository implements IUserRepository {
       email: doc.email,
       password: doc.password,
       name: doc.name,
+      studentProfile: doc.studentProfile,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
@@ -32,6 +33,7 @@ export class UserRepository implements IUserRepository {
       email: userData.email.toLowerCase(),
       password: userData.password,
       name: userData.name,
+      studentProfile: userData.studentProfile,
     });
     return this.mapToEntity(doc as IUserDocument);
   }

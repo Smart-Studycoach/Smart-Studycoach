@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       email: body.email,
       password: body.password,
       name: body.name,
+      studentProfile: body.studentProfile,
     });
 
     return NextResponse.json(result, { status: 201 });

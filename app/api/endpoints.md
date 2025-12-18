@@ -2,7 +2,7 @@
 
 ## Authentication
 
-### POST `/auth/login`
+### POST `/api/auth/login`
 
 Login user with credentials.
 
@@ -19,12 +19,29 @@ Login user with credentials.
 
 ```json
 {
-  "token": "string",
-  "user": { "id": "string", "email": "string" }
+  "user": {
+    "_id": "string",
+    "email": "string",
+    "name": "string",
+    "studentProfile": "string",
+    "favoriteModules": ["string"],
+    "chosenModules": ["string"],
+    "createdAt": "string",
+    "updatedAt": "string"
+  },
+  "token": "string"
 }
 ```
 
-### POST `/auth/register`
+**Error Response:** `401 Unauthorized`
+
+```json
+{
+  "error": "Invalid email or password"
+}
+```
+
+### POST `/api/auth/register`
 
 Register a new user account.
 
@@ -34,38 +51,99 @@ Register a new user account.
 {
   "email": "string",
   "password": "string",
-  "name": "string"
+  "name": "string",
+  "studentProfile": "string"
 }
 ```
+
+**Password Requirements:**
+- Minimum 12 characters
+- At least one uppercase letter
+- At least one number
+- At least one special character (!@#$%^&*(),.?":{}|<>)
 
 **Response:** `201 Created`
 
 ```json
 {
-  "id": "string",
-  "email": "string",
-  "name": "string"
+  "user": {
+    "_id": "string",
+    "email": "string",
+    "name": "string",
+    "studentProfile": "string",
+    "favoriteModules": ["string"],
+    "chosenModules": ["string"],
+    "createdAt": "string",
+    "updatedAt": "string"
+  },
+  "token": "string"
 }
 ```
 
-### GET `/auth/account`
+**Error Response:** `409 Conflict`
+
+```json
+{
+  "error": "User with this email already exists"
+}
+```
+
+### GET `/api/auth`
 
 Get current user account details (requires authentication).
+
+**Headers:**
+
+```
+Authorization: Bearer {token}
+```
 
 **Response:** `200 OK`
 
 ```json
 {
-  "id": "string",
-  "email": "string",
-  "name": "string",
-  "createdAt": "string"
+  "user": {
+    "_id": "string",
+    "email": "string",
+    "name": "string",
+    "studentProfile": "string",
+    "favoriteModules": ["string"],
+    "chosenModules": ["string"],
+    "createdAt": "string",
+    "updatedAt": "string"
+  }
+}
+```
+
+**Error Response:** `401 Unauthorized`
+
+```json
+{
+  "error": "No token provided"
+}
+```
+
+### DELETE `/api/auth`
+
+Delete current user account (requires authentication).
+
+**Headers:**
+
+```
+Authorization: Bearer {token}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "message": "User deleted successfully"
 }
 ```
 
 ## Modules
 
-### GET `/modules`
+### GET `/api/modules`
 
 Retrieve all study modules.
 
@@ -75,10 +153,27 @@ Retrieve all study modules.
 {
   "modules": [
     {
-      "id": "string",
-      "title": "string",
-      "description": "string"
+      "_id": "string",
+      "id": "number",
+      "name": "string",
+      "shortdescription": ["string"],
+      "description": "string",
+      "studycredit": "number",
+      "location": ["string"],
+      "level": "string",
+      "learningoutcomes": "string",
+      "estimated_difficulty": "number",
+      "available_spots": "number",
+      "start_date": "string"
     }
   ]
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to fetch modules"
 }
 ```

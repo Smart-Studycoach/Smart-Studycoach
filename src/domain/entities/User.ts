@@ -3,6 +3,7 @@ export interface User {
   email: string;
   password: string; 
   name: string;
+  studentProfile: string;
   favoriteModules?: string[];
   chosenModules?: string[];
   createdAt: Date;
@@ -13,6 +14,7 @@ export interface CreateUserDTO {
   email: string;
   password: string;
   name: string;
+  studentProfile: string;
 }
 
 export interface LoginDTO {
