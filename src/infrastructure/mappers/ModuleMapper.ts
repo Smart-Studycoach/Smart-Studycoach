@@ -6,7 +6,7 @@ export class ModuleMapper {
   static mapToDomain(doc: IModuleDocument): Module {
     return {
       _id: doc._id.toString(),
-      id: doc.id,
+      module_id: doc.module_id,
       name: doc.name,
       shortdescription: doc.shortdescription,
       description: doc.description,
