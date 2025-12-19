@@ -1,13 +1,22 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { authService } from '@/lib/services/auth';
 import type { User } from '@/lib/types/auth';
 
 export function ConditionalHeader() {
   const pathname = usePathname();
-  const [user] = useState<User | null>(() => authService.getUser());
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const currentUser = authService.getUser();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUser(currentUser);
+    setIsLoading(false);
+  }, []);
   
   // Hide header on login and register pages
   if (pathname === '/login' || pathname === '/register') {
@@ -27,17 +36,20 @@ export function ConditionalHeader() {
           </nav>
 
           <div className="user-actions nav">
-            {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}> 
+            {isLoading ? (
+              <div style={{ width: '80px', height: '32px' }} />
+            ) : user ? (
                 <a href="/account" className="nav-link-profile" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {user.name}
-                <img 
+                <Image 
                   src={`https://api.dicebear.com/9.x/miniavs/svg?seed=${encodeURIComponent(user._id)}`}
                   alt={user.name}
-                  style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                  width={32}
+                  height={32}
+                  style={{ borderRadius: '50%' }}
+                  unoptimized={true}
                 />
                 </a>
-              </div>
             ) : (
               <a href="/login" className="login-btn">Login</a>
             )}
