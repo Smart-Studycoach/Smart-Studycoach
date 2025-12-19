@@ -30,8 +30,3 @@ export function getUserIdFromRequest(
 
   return { userId: decoded.userId };
 }
-
-export default {
-  getTokenFromRequest,
-  getUserIdFromRequest,
-};
