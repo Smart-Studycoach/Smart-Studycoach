@@ -1,0 +1,384 @@
+.module-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #323333;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error {
+  color: #C6002A;
+}
+
+/* Header Section */
+.module-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.module-type {
+color: #c6002a;
+    text-transform: uppercase;
+    letter-spacing: .025em;
+    font-size: 2rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.module-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 1rem 0;
+  line-height: 1.2;
+}
+
+.module-tags {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.tag {
+    color: #fff;
+    background-color: #323333;
+    border-radius: 50px;
+    padding: .4rem 1rem;
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.tag-green {
+  background-color: #4BAB64;
+}
+
+.module-summary {
+  max-width: 600px;
+  margin: 1.5rem auto;
+  color: #ccc;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.module-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn-primary, .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background-color: #fff;
+  color: #323333;
+  border-color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Content Section */
+.module-content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.module-content:first-of-type {
+  margin-top: 3rem;
+}
+
+.module-content + .module-content {
+  grid-template-columns: 30% 70%;
+}
+
+.module-image {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #323333;
+}
+
+.module-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  min-height: 300px;
+}
+
+.learning-title-side {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+.learning-title-side::before {
+content: "";
+    z-index: 0;
+    background-color: #c6002a;
+    border-radius: 8px;
+    width: 65%;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.learning-title-box {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1.5rem;
+}
+
+.learning-title-box h2 {
+    color: #fff;
+    text-align: left;
+    margin: 0;
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 35px;
+}
+
+.learning-content {
+  padding: 2rem 0;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.learning-content p {
+  line-height: 1.7;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Right Sidebar */
+.module-info-card {
+  background-color: #323333;
+  padding: 2rem;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.info-item {
+    padding: 0.5rem 0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #C6002A;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item p:not(.info-label) {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.spots-available {
+  color: #4BAB64 !important;
+  font-weight: 600 !important;
+}
+
+/* Bottom Section */
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.contact-section {
+  background-color: #323333;
+  padding: 2.5rem;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.contact-section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.contact-subtitle {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #fff;
+  color: #323333;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-contact:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.teacher-card {
+  background-color: #C6002A;
+  padding: 2.5rem;
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.teacher-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.teacher-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .module-content {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-section {
+    grid-template-columns: 1fr;
+  }
+
+  .content-right {
+    order: 2;
+  }
+
+  .module-title {
+    font-size: 2rem;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .module-detail-container {
+    padding: 1rem;
+  }
+
+  .module-title {
+    font-size: 1.5rem;
+  }
+
+  .module-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .module-tags {
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.75rem;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+
+  .btn-contact {
+    width: 100%;
+  }
+}

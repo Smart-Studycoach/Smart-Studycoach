@@ -5,4 +5,5 @@ import { Module } from "../entities/Module";
 
 export interface IModuleRepository {
   findAll(): Promise<Module[]>;
+  findById(id: string): Promise<Module | null>;
 }

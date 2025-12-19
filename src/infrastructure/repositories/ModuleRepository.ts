@@ -9,7 +9,7 @@ export class ModuleRepository implements IModuleRepository {
   private mapToEntity(doc: IModuleDocument): Module {
     return {
       _id: doc._id.toString(),
-      id: doc.id,
+      module_id: doc.module_id,
       name: doc.name,
       shortdescription: doc.shortdescription,
       description: doc.description,
@@ -27,5 +27,12 @@ export class ModuleRepository implements IModuleRepository {
     await connectToDatabase();
     const docs = await ModuleModel.find({});
     return docs.map((doc) => this.mapToEntity(doc as IModuleDocument));
+  }
+
+  async findById(module_id: string): Promise<Module | null> {
+    await connectToDatabase();
+    const doc = await ModuleModel.findOne({ module_id: parseInt(module_id) });
+    if (!doc) return null;
+    return this.mapToEntity(doc as IModuleDocument);
   }
 }
