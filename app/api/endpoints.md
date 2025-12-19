@@ -178,3 +178,46 @@ Retrieve all study modules.
   "error": "Failed to fetch modules"
 }
 ```
+
+### GET `/api/modules/[id]`
+
+Retrieve one study module.
+
+**Response:** `200 OK`
+
+```json
+{
+  "modules": [
+    {
+      "_id": "string",
+      "id": "number",
+      "name": "string",
+      "shortdescription": ["string"],
+      "description": "string",
+      "studycredit": "number",
+      "location": ["string"],
+      "level": "string",
+      "learningoutcomes": "string",
+      "estimated_difficulty": "number",
+      "available_spots": "number",
+      "start_date": "string"
+    }
+  ]
+}
+```
+
+**Error Response:** `404 Not found`
+
+```json
+{
+  "error": "Module not found"
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to fetch module"
+}
+```
