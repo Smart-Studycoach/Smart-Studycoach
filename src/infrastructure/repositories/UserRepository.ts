@@ -40,12 +40,12 @@ export class UserRepository implements IUserRepository {
 
   async delete(id: string): Promise<boolean> {
     try {
-        await connectToDatabase();
-        const result = await UserModel.deleteOne({ _id: id });
-        return result.deletedCount === 1;
+      await connectToDatabase();
+      const result = await UserModel.deleteOne({ _id: id });
+      return result.deletedCount === 1;
     } catch (error) {
-        console.error("Error deleting user:", error);
-        return false;
+      console.error("Error deleting user:", error);
+      return false;
     }
   }
 
@@ -55,5 +55,15 @@ export class UserRepository implements IUserRepository {
       email: email.toLowerCase(),
     });
     return count > 0;
+  }
+
+  async hasChosenModule(user: User, module_id: string): Promise<boolean> {
+    await connectToDatabase();
+    const parsedId = Number.parseInt(module_id, 10);
+    const doc = await UserModel.findOne({
+      _id: user._id,
+      chosenModules: parsedId,
+    });
+    return doc !== null;
   }
 }

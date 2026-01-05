@@ -15,6 +15,6 @@ export interface ModuleFilters {
 export interface IModuleRepository {
   findAll(filters?: ModuleFilters): Promise<Module[]>;
   findById(id: string): Promise<Module | null>;
-  addChosenModule(user_id: User, module_id: string): Promise<boolean>;
-  pullChosenModule(user_id: User, module_id: string): Promise<boolean>;
+  addChosenModule(user: User, module_id: string): Promise<boolean>;
+  pullChosenModule(user: User, module_id: string): Promise<boolean>;
 }
