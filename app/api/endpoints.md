@@ -221,3 +221,47 @@ Retrieve one study module.
   "error": "Failed to fetch module"
 }
 ```
+
+### POST `/api/modules/[id]`
+
+**Request Body:**
+
+```json
+{
+  "chosen": true
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "message": "Module choice updated successfully",
+  "moduleId": "number",
+  "chosen": true
+}
+```
+
+**Error Response:** `400 Bad Request`
+
+```json
+{
+  "error": "Invalid request body"
+}
+```
+
+**Error Response:** `404 Not Found`
+
+```json
+{
+  "error": "Module not found"
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to update module choice"
+}
+```

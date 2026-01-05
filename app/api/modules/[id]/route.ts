@@ -10,10 +10,7 @@ export async function GET(
     const module = await moduleService.getModuleById(id);
 
     if (!module) {
-      return NextResponse.json(
-        { error: "Module not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Module not found" }, { status: 404 });
     }
 
     return NextResponse.json({ module });
