@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: 'api.dicebear.com',
         pathname: '/9.x/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
