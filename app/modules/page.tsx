@@ -113,6 +113,7 @@ export default async function Index({
             paginatedModules.map((module) => (
               <ModuleCard
                 key={module._id}
+                id={module.id}
                 title={module.name}
                 description={module.description}
                 image={`https://picsum.photos/400/300?random=${module.id}`}

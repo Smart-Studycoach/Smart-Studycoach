@@ -1,6 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 interface ModuleCardProps {
+  id: number;
   title: string;
   description: string;
   image?: string;
@@ -9,6 +11,7 @@ interface ModuleCardProps {
 }
 
 export function ModuleCard({
+  id,
   title,
   description,
   image,
@@ -16,7 +19,8 @@ export function ModuleCard({
   className = "",
 }: ModuleCardProps) {
   return (
-    <Card className={`bg-[#323333] border-0 text-white hover:bg-zinc-800/70 transition-colors ${className}`}>
+    <Link href={`/modules/${id}`} className="block">
+      <Card className={`bg-[#323333] border-0 text-white hover:bg-zinc-800/70 transition-colors cursor-pointer ${className}`}>
       {/* Image Section */}
       {image && (
         <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
@@ -56,5 +60,6 @@ export function ModuleCard({
         </p>
       </CardContent>
     </Card>
+    </Link>
   );
 }
