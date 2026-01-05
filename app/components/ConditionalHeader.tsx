@@ -16,7 +16,7 @@ export function ConditionalHeader() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(currentUser);
     setIsLoading(false);
-  }, []);
+  }, [pathname]);
   
   // Hide header on login and register pages
   if (pathname === '/login' || pathname === '/register') {
