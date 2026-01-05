@@ -1,7 +1,7 @@
 // Infrastructure - Repository Implementation
 // Implements the domain interface using Mongoose
 
-import { Module, IModuleRepository } from "@/domain";
+import { Module, IModuleRepository, ModuleFilters } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
 
@@ -23,9 +23,39 @@ export class ModuleRepository implements IModuleRepository {
     };
   }
 
-  async findAll(): Promise<Module[]> {
+  async findAll(filters?: ModuleFilters): Promise<Module[]> {
     await connectToDatabase();
-    const docs = await ModuleModel.find({});
+    
+    const query: any = {};
+    
+    if (filters?.name) {
+      query.name = { $regex: filters.name, $options: 'i' };
+    }
+    
+    if (filters?.level) {
+      query.level = filters.level;
+    }
+    
+    if (filters?.studycredit) {
+      query.studycredit = filters.studycredit;
+    }
+    
+    if (filters?.location) {
+      query.location = { $in: [filters.location] };
+    }
+    
+    if (filters?.estimated_difficulty) {
+      query.estimated_difficulty = filters.estimated_difficulty;
+    }
+    
+    const docs = await ModuleModel.find(query);
     return docs.map((doc) => this.mapToEntity(doc as IModuleDocument));
+  }
+
+  async findById(id: string): Promise<Module | null> {
+    await connectToDatabase();
+    const doc = await ModuleModel.findOne({ id: parseInt(id) });
+    if (!doc) return null;
+    return this.mapToEntity(doc as IModuleDocument);
   }
 }

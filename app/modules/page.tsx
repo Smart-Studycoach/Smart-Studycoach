@@ -5,7 +5,37 @@ import { Module } from "@/domain/entities/Module";
 
 const ITEMS_PER_PAGE = 20;
 
-async function getModules(): Promise<Module[]> {
+async function getModules(searchParams?: Record<string, string>): Promise<Module[]> {
+  try {
+    const params = new URLSearchParams();
+    
+    // Pass through all filter parameters to the backend
+    if (searchParams?.name) params.set('name', searchParams.name);
+    if (searchParams?.level) params.set('level', searchParams.level);
+    if (searchParams?.studyCredit) params.set('studyCredit', searchParams.studyCredit);
+    if (searchParams?.location) params.set('location', searchParams.location);
+    if (searchParams?.difficulty) params.set('difficulty', searchParams.difficulty);
+    
+    const queryString = params.toString();
+    const url = `http://localhost:3000/api/modules${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      cache: "no-store",
+    });
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch modules");
+    }
+    
+    const data = await response.json();
+    return data.modules || [];
+  } catch (error) {
+    console.error("Error fetching modules:", error);
+    return [];
+  }
+}
+
+async function getAllModulesForFilters(): Promise<Module[]> {
   try {
     const response = await fetch("http://localhost:3000/api/modules", {
       cache: "no-store",
@@ -26,23 +56,36 @@ async function getModules(): Promise<Module[]> {
 export default async function Index({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ 
+    page?: string;
+    name?: string;
+    level?: string;
+    studyCredit?: string;
+    location?: string;
+    difficulty?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const modules = await getModules();
+  
+  // Fetch filtered modules from backend
+  const modules = await getModules(params);
+  
+  // Fetch all modules to populate filter dropdowns
+  const allModules = await getAllModulesForFilters();
+  
   const currentPage = Number(params?.page) || 1;
   const totalPages = Math.ceil(modules.length / ITEMS_PER_PAGE);
   
-  // Extract unique filter options from modules
-  const levels = Array.from(new Set(modules.map((m) => m.level))).filter(Boolean);
+  // Extract unique filter options from all modules (not filtered)
+  const levels = Array.from(new Set(allModules.map((m) => m.level))).filter(Boolean);
   const studyCredits = Array.from(
-    new Set(modules.map((m) => String(m.studycredit)))
+    new Set(allModules.map((m) => String(m.studycredit)))
   ).filter(Boolean);
   const locations = Array.from(
-    new Set(modules.flatMap((m) => m.location || []))
+    new Set(allModules.flatMap((m) => m.location || []))
   ).filter(Boolean);
   
-  // Calculate pagination
+  // Calculate pagination on already filtered results
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedModules = modules.slice(startIndex, endIndex);
@@ -54,7 +97,7 @@ export default async function Index({
           Welkom bij de modules
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          Toont {startIndex + 1} - {Math.min(endIndex, modules.length)} van {modules.length} modules
+          Toont {modules.length > 0 ? startIndex + 1 : 0} - {Math.min(endIndex, modules.length)} van {modules.length} modules
         </p>
         
         {/* Filters */}
