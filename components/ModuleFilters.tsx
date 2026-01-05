@@ -74,9 +74,9 @@ export function ModuleFilters({
           className={selectClassName}
           style={SELECT_STYLES}
         >
-          <option value="">Level</option>
+          <option value="" style={{ color: "#000" }}>Level</option>
           {levels.map((lv) => (
-            <option key={lv} value={lv}>
+            <option key={lv} value={lv} style={{ color: "#000" }}>
               {lv}
             </option>
           ))}
@@ -89,9 +89,9 @@ export function ModuleFilters({
           className={selectClassName}
           style={SELECT_STYLES}
         >
-          <option value="">Study credit</option>
+          <option value="" style={{ color: "#000" }}>Study credit</option>
           {studyCredits.map((sc) => (
-            <option key={sc} value={sc}>
+            <option key={sc} value={sc} style={{ color: "#000" }}>
               {sc}
             </option>
           ))}
@@ -104,9 +104,9 @@ export function ModuleFilters({
           className={selectClassName}
           style={SELECT_STYLES}
         >
-          <option value="">Location</option>
+          <option value="" style={{ color: "#000" }}>Location</option>
           {locations.map((loc) => (
-            <option key={loc} value={loc}>
+            <option key={loc} value={loc} style={{ color: "#000" }}>
               {loc}
             </option>
           ))}
@@ -119,9 +119,9 @@ export function ModuleFilters({
           className={selectClassName}
           style={SELECT_STYLES}
         >
-          <option value="">Difficulty</option>
+          <option value="" style={{ color: "#000" }}>Difficulty</option>
           {difficulties.map((diff) => (
-            <option key={diff} value={diff}>
+            <option key={diff} value={diff} style={{ color: "#000" }}>
               {diff}
             </option>
           ))}
@@ -132,7 +132,7 @@ export function ModuleFilters({
       <div className="flex justify-center">
         <button
           onClick={handleSearch}
-          className="px-12 py-3 bg-[#C6002A] text-white font-bold rounded-full hover:bg-[#a00020] transition-colors"
+          className="px-12 py-3 bg-[#C6002A] text-white font-bold rounded-full hover:bg-[#a00020] transition-colors cursor-crosshair"
         >
           SEARCH
         </button>

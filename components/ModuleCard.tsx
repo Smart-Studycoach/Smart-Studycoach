@@ -20,7 +20,7 @@ export function ModuleCard({
 }: ModuleCardProps) {
   return (
     <Link href={`/modules/${id}`} className="block">
-      <Card className={`bg-[#323333] border-0 text-white hover:bg-zinc-800/70 transition-colors cursor-pointer ${className}`}>
+      <Card className={`bg-[#323333] border-0 text-white hover:bg-zinc-800/70 transition-colors cursor-pointer flex flex-col ${className}`}>
       {/* Image Section */}
       {image && (
         <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
@@ -32,7 +32,7 @@ export function ModuleCard({
         </div>
       )}
       
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-6 space-y-4 flex-grow min-h-64">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
