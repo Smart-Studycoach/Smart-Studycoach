@@ -84,9 +84,15 @@ export class ModuleRepository implements IModuleRepository {
     if (!doc) return false;
     return true;
   }
-  async pullChosenModule(user_id: User, module_id: string): Promise<boolean> {
-    // Implementation depends on the data model
-    // Placeholder implementation
+
+  async pullChosenModule(user: User, module_id: string): Promise<boolean> {
+    await connectToDatabase();
+    const parsedId = Number.parseInt(module_id, 10);
+    const doc = await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { chosenModules: parsedId } }
+    );
+    if (!doc) return false;
     return true;
   }
 }
