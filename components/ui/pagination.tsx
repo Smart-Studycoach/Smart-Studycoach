@@ -4,6 +4,7 @@ import {
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react"
+import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -65,7 +66,7 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
  * Renders as an anchor tag with button styling.
  * 
  * @param isActive - Indicates if this is the current active page
- * @param size - Size variant of the link: "default", "sm", "lg", "icon", "icon-sm", or "icon-lg"
+ * @param size - Size variant of the link, inherited from button component
  * 
  * @example
  * ```tsx
@@ -75,8 +76,8 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
  */
 type PaginationLinkProps = {
   isActive?: boolean
-  size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg"
-} & React.ComponentProps<"a">
+} & Pick<VariantProps<typeof buttonVariants>, "size"> &
+  React.ComponentProps<"a">
 
 function PaginationLink({
   className,
