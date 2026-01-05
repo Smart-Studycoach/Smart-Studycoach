@@ -4,6 +4,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Button style variants using class-variance-authority.
+ * Provides consistent styling across different button types and sizes.
+ * 
+ * Available variants:
+ * - default: Primary button with brand colors
+ * - destructive: Red button for dangerous actions
+ * - outline: Button with border and transparent background
+ * - secondary: Alternative styling for secondary actions
+ * - ghost: Minimal styling, shows background on hover
+ * - link: Text-only button with underline on hover
+ * 
+ * Available sizes:
+ * - default: Standard button size (h-9)
+ * - sm: Small button (h-8)
+ * - lg: Large button (h-10)
+ * - icon: Square icon button (size-9)
+ * - icon-sm: Small icon button (size-8)
+ * - icon-lg: Large icon button (size-10)
+ */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
@@ -36,6 +56,33 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Button component with variant and size support.
+ * 
+ * @param variant - Visual style variant: "default", "destructive", "outline", "secondary", "ghost", or "link"
+ * @param size - Size variant: "default", "sm", "lg", "icon", "icon-sm", or "icon-lg"
+ * @param asChild - When true, merges props with child element instead of rendering a button.
+ *                  Useful with Radix UI Slot to render the button as a different element (e.g., a link).
+ * 
+ * @example
+ * ```tsx
+ * // Standard button
+ * <Button variant="default">Click me</Button>
+ * 
+ * // Destructive button
+ * <Button variant="destructive">Delete</Button>
+ * 
+ * // Button as a link using asChild
+ * <Button asChild>
+ *   <a href="/page">Go to page</a>
+ * </Button>
+ * 
+ * // Icon button
+ * <Button variant="ghost" size="icon">
+ *   <Icon />
+ * </Button>
+ * ```
+ */
 function Button({
   className,
   variant = "default",

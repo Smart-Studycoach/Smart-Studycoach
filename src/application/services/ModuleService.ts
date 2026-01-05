@@ -13,8 +13,4 @@ export class ModuleService {
   async getModuleById(id: string): Promise<Module | null> {
     return this.moduleRepository.findById(id);
   }
-
-  async getModuleById(id: string): Promise<Module | null> {
-    return this.moduleRepository.findById(id);
-  }
 }
