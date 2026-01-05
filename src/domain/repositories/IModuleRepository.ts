@@ -2,6 +2,7 @@
 // Infrastructure layer implements this interface
 
 import { Module } from "../entities/Module";
+import { User } from "@/domain";
 
 export interface ModuleFilters {
   name?: string;
@@ -14,4 +15,6 @@ export interface ModuleFilters {
 export interface IModuleRepository {
   findAll(filters?: ModuleFilters): Promise<Module[]>;
   findById(id: string): Promise<Module | null>;
+  addChosenModule(user_id: User, module_id: string): Promise<boolean>;
+  pullChosenModule(user_id: User, module_id: string): Promise<boolean>;
 }
