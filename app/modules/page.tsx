@@ -17,7 +17,8 @@ async function getModules(searchParams?: Record<string, string>): Promise<Module
     if (searchParams?.difficulty) params.set('difficulty', searchParams.difficulty);
     
     const queryString = params.toString();
-    const url = `http://localhost:3000/api/modules${queryString ? `?${queryString}` : ''}`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const url = `${baseUrl}/api/modules${queryString ? `?${queryString}` : ''}`;
     
     const response = await fetch(url, {
       cache: "no-store",
@@ -37,7 +38,8 @@ async function getModules(searchParams?: Record<string, string>): Promise<Module
 
 async function getAllModulesForFilters(): Promise<Module[]> {
   try {
-    const response = await fetch("http://localhost:3000/api/modules", {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/modules`, {
       cache: "no-store",
     });
     
@@ -113,12 +115,12 @@ export default async function Index({
             paginatedModules.map((module) => (
               <ModuleCard
                 key={module._id}
-                id={module.id}
+                id={module.module_id}
                 title={module.name}
                 description={module.description}
-                image={`https://picsum.photos/400/300?random=${module.id}`}
+                image={`https://picsum.photos/400/300?random=${module.module_id}`}
                 tags={[
-                  { label: module.location[0] || "NL" },
+                  { label: module.location?.[0] || "NL" },
                   { label: `${module.studycredit}ects` },
                   { label: module.level },
                 ]}

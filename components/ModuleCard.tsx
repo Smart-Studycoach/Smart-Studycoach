@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ModuleCardProps {
   id: number;
@@ -24,10 +25,12 @@ export function ModuleCard({
       {/* Image Section */}
       {image && (
         <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
-          <img
+          <Image
             src={image}
             alt={title}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       )}
@@ -39,8 +42,7 @@ export function ModuleCard({
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 text-xs font-bold uppercase rounded-xl text-white"
-                style={{ backgroundColor: '#C6002A' }}
+                className="px-3 py-1 text-xs font-bold uppercase rounded-xl text-white bg-[#C6002A]"
               >
                 {tag.label}
               </span>
@@ -54,9 +56,8 @@ export function ModuleCard({
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-gray-300 leading-relaxed">
-          {description.split(' ').slice(0, 30).join(' ')}
-          {description.split(' ').length > 30 && '...'}
+        <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">
+          {description}
         </p>
       </CardContent>
     </Card>

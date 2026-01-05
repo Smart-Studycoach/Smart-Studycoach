@@ -15,13 +15,23 @@ export async function GET(request: Request) {
     if (level) filters.level = level;
     
     const studyCredit = searchParams.get('studyCredit');
-    if (studyCredit) filters.studycredit = parseInt(studyCredit);
+    if (studyCredit) {
+      const parsedStudyCredit = Number.parseInt(studyCredit, 10);
+      if (!Number.isNaN(parsedStudyCredit)) {
+        filters.studycredit = parsedStudyCredit;
+      }
+    }
     
     const location = searchParams.get('location');
     if (location) filters.location = location;
     
     const difficulty = searchParams.get('difficulty');
-    if (difficulty) filters.estimated_difficulty = parseInt(difficulty);
+    if (difficulty) {
+      const parsedDifficulty = Number.parseInt(difficulty, 10);
+      if (!Number.isNaN(parsedDifficulty)) {
+        filters.estimated_difficulty = parsedDifficulty;
+      }
+    }
     
     const modules = await moduleService.getAllModules(filters);
 

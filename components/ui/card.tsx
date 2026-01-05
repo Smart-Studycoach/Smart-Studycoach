@@ -2,6 +2,26 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Root card container component.
+ * Provides a styled container with border, shadow, and rounded corners.
+ * 
+ * @example
+ * ```tsx
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>Card Title</CardTitle>
+ *     <CardDescription>Card description text</CardDescription>
+ *   </CardHeader>
+ *   <CardContent>
+ *     Main card content goes here
+ *   </CardContent>
+ *   <CardFooter>
+ *     Footer content or actions
+ *   </CardFooter>
+ * </Card>
+ * ```
+ */
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -15,6 +35,11 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card header component for title and description.
+ * Uses CSS Grid to layout CardTitle, CardDescription, and optional CardAction.
+ * Place at the top of a Card component.
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -28,6 +53,10 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card title component.
+ * Should be used inside CardHeader for the main card heading.
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -38,6 +67,11 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card description component.
+ * Should be used inside CardHeader for supporting text below the title.
+ * Styled with muted foreground color.
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -48,6 +82,11 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card action component for buttons or controls in the header.
+ * Positioned in the top-right corner of CardHeader using CSS Grid.
+ * Use for action buttons like close, edit, or menu icons.
+ */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -61,6 +100,11 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card content component.
+ * Main content area of the card with consistent padding.
+ * Place between CardHeader and CardFooter.
+ */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -71,6 +115,11 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Card footer component.
+ * Typically used for action buttons or additional information at the bottom of the card.
+ * Place at the bottom of a Card component, after CardContent.
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

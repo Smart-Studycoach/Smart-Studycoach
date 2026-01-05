@@ -26,10 +26,13 @@ export class ModuleRepository implements IModuleRepository {
   async findAll(filters?: ModuleFilters): Promise<Module[]> {
     await connectToDatabase();
     
-    const query: any = {};
+    // Use a more specific type for the MongoDB query
+    const query: Record<string, unknown> = {};
     
     if (filters?.name) {
-      query.name = { $regex: filters.name, $options: 'i' };
+      // Escape special regex characters to prevent injection
+      const escapedName = filters.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.name = { $regex: escapedName, $options: 'i' };
     }
     
     if (filters?.level) {
@@ -41,7 +44,7 @@ export class ModuleRepository implements IModuleRepository {
     }
     
     if (filters?.location) {
-      query.location = { $in: [filters.location] };
+      query.location = filters.location;
     }
     
     if (filters?.estimated_difficulty) {
@@ -52,15 +55,9 @@ export class ModuleRepository implements IModuleRepository {
     return docs.map((doc) => this.mapToEntity(doc as IModuleDocument));
   }
 
-<<<<<<< HEAD
-  async findById(id: string): Promise<Module | null> {
-    await connectToDatabase();
-    const doc = await ModuleModel.findOne({ id: parseInt(id) });
-=======
   async findById(module_id: string): Promise<Module | null> {
     await connectToDatabase();
     const doc = await ModuleModel.findOne({ module_id: parseInt(module_id) });
->>>>>>> 9299ec3e0d2de42f896d44a08381b7388fb23c85
     if (!doc) return null;
     return this.mapToEntity(doc as IModuleDocument);
   }
