@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IModuleDocument extends Document {
-  id: number;
+  module_id: number;
   name: string;
   shortdescription: string[];
   description: string;
@@ -17,7 +17,7 @@ export interface IModuleDocument extends Document {
 
 const ModuleSchema = new Schema<IModuleDocument>(
   {
-    id: { type: Number, required: true },
+    module_id: { type: Number, required: true },
     name: { type: String, required: true },
     shortdescription: { type: [String] },
     description: { type: String },

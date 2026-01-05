@@ -2,7 +2,7 @@
 
 export interface Module {
   _id: string;
-  id: number;
+  module_id: number;
   name: string;
   shortdescription: string[];
   description: string;
