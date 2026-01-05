@@ -57,7 +57,9 @@ export class ModuleRepository implements IModuleRepository {
 
   async findById(module_id: string): Promise<Module | null> {
     await connectToDatabase();
-    const doc = await ModuleModel.findOne({ module_id: parseInt(module_id) });
+    const parsedId = Number.parseInt(module_id, 10);
+    if (Number.isNaN(parsedId)) return null;
+    const doc = await ModuleModel.findOne({ module_id: parsedId });
     if (!doc) return null;
     return this.mapToEntity(doc as IModuleDocument);
   }
