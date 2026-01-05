@@ -38,18 +38,18 @@ export async function POST(request: NextRequest) {
 
     // Number
     if (!/[0-9]/.test(body.password)) {
-        return NextResponse.json(
-            { error: "Password must contain at least one number" },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Password must contain at least one number" },
+        { status: 400 }
+      );
     }
 
     // Special character
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(body.password)) {
-        return NextResponse.json(
-            { error: "Password must contain at least one special character" },
-            { status: 400 }
-        );
+      return NextResponse.json(
+        { error: "Password must contain at least one special character" },
+        { status: 400 }
+      );
     }
 
     const result = await authApplicationService.register({
@@ -59,7 +59,20 @@ export async function POST(request: NextRequest) {
       studentProfile: body.studentProfile,
     });
 
-    return NextResponse.json(result, { status: 201 });
+    const res = NextResponse.json(result, { status: 201 });
+    try {
+      res.cookies.set("token", result.token, {
+        httpOnly: true,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+      });
+    } catch (e) {
+      console.error("Failed to set auth cookie on register:", e);
+    }
+
+    return res;
   } catch (error) {
     console.error("Registration failed:", error);
 
@@ -69,9 +82,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(
-      { error: "Registration failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }

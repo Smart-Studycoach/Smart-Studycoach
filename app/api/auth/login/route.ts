@@ -4,7 +4,7 @@ import { authApplicationService } from "@/infrastructure/container";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
- 
+
     if (!body.email || !body.password) {
       return NextResponse.json(
         { error: "Email and password are required" },
@@ -17,7 +17,22 @@ export async function POST(request: NextRequest) {
       password: body.password,
     });
 
-    return NextResponse.json(result);
+    // Set HttpOnly cookie with the JWT so browser will send it automatically
+    const res = NextResponse.json(result);
+    try {
+      res.cookies.set("token", result.token, {
+        httpOnly: true,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+    } catch (e) {
+      // ignore cookie set errors in environments that don't support it
+      console.error("Failed to set auth cookie:", e);
+    }
+
+    return res;
   } catch (error) {
     console.error("Login failed:", error);
 

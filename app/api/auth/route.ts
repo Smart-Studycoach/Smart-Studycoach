@@ -52,7 +52,14 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "User deleted successfully" });
+    const res = NextResponse.json({ message: "User deleted successfully" });
+    try {
+      // Clear the auth cookie
+      res.cookies.set("token", "", { httpOnly: true, path: "/", maxAge: 0 });
+    } catch (e) {
+      console.error("Failed to clear auth cookie:", e);
+    }
+    return res;
   } catch (error) {
     console.error("Delete user failed:", error);
     return NextResponse.json(

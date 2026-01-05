@@ -30,9 +30,9 @@ const UserSchema = new Schema<IUserDocument>(
       trim: true,
     },
     studentProfile: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+      trim: true,
     },
     favoriteModules: {
       type: [String],
@@ -44,13 +44,12 @@ const UserSchema = new Schema<IUserDocument>(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
     collection: "Users",
   }
 );
 
-// Index for faster email lookups
-UserSchema.index({ email: 1 });
+// Email has a unique index via the `unique: true` field option
 
 export const UserModel =
   mongoose.models.User || mongoose.model<IUserDocument>("User", UserSchema);
