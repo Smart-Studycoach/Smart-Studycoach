@@ -52,9 +52,15 @@ export class ModuleRepository implements IModuleRepository {
     return docs.map((doc) => this.mapToEntity(doc as IModuleDocument));
   }
 
+<<<<<<< HEAD
+  async findById(id: string): Promise<Module | null> {
+    await connectToDatabase();
+    const doc = await ModuleModel.findOne({ id: parseInt(id) });
+=======
   async findById(module_id: string): Promise<Module | null> {
     await connectToDatabase();
     const doc = await ModuleModel.findOne({ module_id: parseInt(module_id) });
+>>>>>>> 9299ec3e0d2de42f896d44a08381b7388fb23c85
     if (!doc) return null;
     return this.mapToEntity(doc as IModuleDocument);
   }
