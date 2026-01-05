@@ -3,7 +3,15 @@
 
 import { Module } from "../entities/Module";
 
+export interface ModuleFilters {
+  name?: string;
+  level?: string;
+  studycredit?: number;
+  location?: string;
+  estimated_difficulty?: number;
+}
+
 export interface IModuleRepository {
-  findAll(): Promise<Module[]>;
+  findAll(filters?: ModuleFilters): Promise<Module[]>;
   findById(id: string): Promise<Module | null>;
 }
