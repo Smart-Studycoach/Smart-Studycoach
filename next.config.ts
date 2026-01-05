@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
         pathname: '/9.x/**',
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
   },
 };
 

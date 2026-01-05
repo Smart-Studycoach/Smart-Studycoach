@@ -37,7 +37,7 @@ export function ConditionalHeader() {
 
           <div className="user-actions nav">
             {isLoading ? (
-              <div style={{ width: '80px', height: '32px' }} />
+              <div aria-hidden="true" style={{ width: '80px', height: '32px' }} />
             ) : user ? (
                 <a href="/account" className="nav-link-profile" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {user.name}
@@ -47,7 +47,6 @@ export function ConditionalHeader() {
                   width={32}
                   height={32}
                   style={{ borderRadius: '50%' }}
-                  unoptimized={true}
                 />
                 </a>
             ) : (
