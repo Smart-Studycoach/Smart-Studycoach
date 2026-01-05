@@ -14,7 +14,15 @@ export async function GET(
       return NextResponse.json({ error: "Module not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ module });
+    const authResult = requireAuth(request);
+    if (authResult instanceof NextResponse)
+      return NextResponse.json({ module, module_chosen: false });
+
+    const { userId } = authResult;
+
+    const module_chosen = await moduleService.hasUserChosenModule(userId, id);
+
+    return NextResponse.json({ module, module_chosen });
   } catch (error) {
     console.error("Failed to fetch module", error);
     return NextResponse.json(

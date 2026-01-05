@@ -44,6 +44,7 @@ export default function ModuleDetailPage() {
 
         setModule(data.module);
         setLoading(false);
+        setIsRegistered(data.module_chosen);
       } catch (err) {
         setError("Failed to load module");
         setLoading(false);
