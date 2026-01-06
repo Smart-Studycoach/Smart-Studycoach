@@ -81,6 +81,8 @@ Register a new user account.
 }
 ```
 
+Note: On successful login/register the server also sets an HttpOnly cookie named `token` on the response. Clients may either use the `Authorization: Bearer {token}` header or let the browser send the HttpOnly `token` cookie automatically on subsequent requests.
+
 **Error Response:** `409 Conflict`
 
 ```json
@@ -95,9 +97,13 @@ Get current user account details (requires authentication).
 
 **Headers:**
 
+Either supply the header or rely on the HttpOnly cookie set at login/register:
+
 ```
 Authorization: Bearer {token}
 ```
+
+Or provide the `token` cookie (HttpOnly) which the server will also accept.
 
 **Response:** `200 OK`
 
@@ -130,9 +136,13 @@ Delete current user account (requires authentication).
 
 **Headers:**
 
+Either supply the header or rely on the HttpOnly cookie set at login/register:
+
 ```
 Authorization: Bearer {token}
 ```
+
+Or provide the `token` cookie (HttpOnly) which the server will also accept.
 
 **Response:** `200 OK`
 
@@ -141,6 +151,8 @@ Authorization: Bearer {token}
   "message": "User deleted successfully"
 }
 ```
+
+Note: On successful account deletion the server clears the `token` cookie.
 
 ## Modules
 
@@ -219,5 +231,59 @@ Retrieve one study module.
 ```json
 {
   "error": "Failed to fetch module"
+}
+```
+
+### POST `/api/modules/[id]`
+
+**Request Body:**
+
+```json
+{
+  "chosen": true
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "message": "Module choice updated successfully",
+  "moduleId": "number",
+  "chosen": true
+}
+```
+
+**Error Response:** `400 Bad Request`
+
+```json
+{
+  "error": "Invalid request body"
+}
+```
+
+**Authentication:** This endpoint requires authentication. Provide either `Authorization: Bearer {token}` or rely on the HttpOnly `token` cookie set during login/register. Requests without a valid token will receive `401 Unauthorized`.
+
+**Error Response:** `401 Unauthorized`
+
+```json
+{
+  "error": "No token provided"
+}
+```
+
+**Error Response:** `404 Not Found`
+
+```json
+{
+  "error": "Module not found"
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to update module choice"
 }
 ```

@@ -7,10 +7,21 @@ type AuthError = "no-token" | "invalid";
  * Extracts a Bearer token from the `Authorization` header.
  */
 export function getTokenFromRequest(request: NextRequest): string | null {
+  // Prefer Authorization header if present
   const authHeader = request.headers.get("authorization");
-  if (!authHeader) return null;
-  if (!authHeader.startsWith("Bearer ")) return null;
-  return authHeader.substring(7);
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return authHeader.substring(7);
+  }
+
+  // Fallback to HttpOnly cookie named `token` (set on login/register)
+  try {
+    const cookie = request.cookies.get("token");
+    if (cookie) return typeof cookie === "string" ? cookie : cookie.value;
+  } catch (e) {
+    // ignore and return null
+  }
+
+  return null;
 }
 
 /**

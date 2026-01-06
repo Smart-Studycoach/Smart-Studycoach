@@ -7,14 +7,18 @@ import { UserRepository } from "../repositories/UserRepository";
 import { AuthServiceInfrastructure } from "../services/AuthServiceInfrastructure";
 
 // Create repository instances
-const moduleRepository = new ModuleRepository();
+
 const userRepository = new UserRepository();
+const moduleRepository = new ModuleRepository(userRepository);
 
 // Create infrastructure service instances
 export const authService = new AuthServiceInfrastructure();
 
 // Create application service instances with injected dependencies
-export const moduleService = new ModuleService(moduleRepository);
+export const moduleService = new ModuleService(
+  moduleRepository,
+  userRepository
+);
 export const authApplicationService = new AuthApplicationService(
   userRepository,
   authService

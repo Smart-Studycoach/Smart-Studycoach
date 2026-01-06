@@ -4,8 +4,18 @@
 import { Module, IModuleRepository, ModuleFilters } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
+import {
+  User,
+  CreateUserDTO,
+  LoginDTO,
+  AuthResponse,
+  IUserRepository,
+  IAuthService,
+} from "@/domain";
+import { UserModel } from "../database/models/UserModel";
 
 export class ModuleRepository implements IModuleRepository {
+  constructor(private readonly userRepository: IUserRepository) {}
   private mapToEntity(doc: IModuleDocument): Module {
     return {
       _id: doc._id.toString(),
@@ -25,32 +35,32 @@ export class ModuleRepository implements IModuleRepository {
 
   async findAll(filters?: ModuleFilters): Promise<Module[]> {
     await connectToDatabase();
-    
+
     // Use a more specific type for the MongoDB query
     const query: Record<string, unknown> = {};
-    
+
     if (filters?.name) {
       // Escape special regex characters to prevent injection
-      const escapedName = filters.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query.name = { $regex: escapedName, $options: 'i' };
+      const escapedName = filters.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      query.name = { $regex: escapedName, $options: "i" };
     }
-    
+
     if (filters?.level) {
       query.level = filters.level;
     }
-    
+
     if (filters?.studycredit) {
       query.studycredit = filters.studycredit;
     }
-    
+
     if (filters?.location) {
       query.location = filters.location;
     }
-    
+
     if (filters?.estimated_difficulty) {
       query.estimated_difficulty = filters.estimated_difficulty;
     }
-    
+
     const docs = await ModuleModel.find(query);
     return docs.map((doc) => this.mapToEntity(doc as IModuleDocument));
   }
@@ -62,5 +72,27 @@ export class ModuleRepository implements IModuleRepository {
     const doc = await ModuleModel.findOne({ module_id: parsedId });
     if (!doc) return null;
     return this.mapToEntity(doc as IModuleDocument);
+  }
+
+  async addChosenModule(user: User, module_id: string): Promise<boolean> {
+    await connectToDatabase();
+    const parsedId = Number.parseInt(module_id, 10);
+    const doc = await UserModel.updateOne(
+      { _id: user._id },
+      { $addToSet: { chosenModules: parsedId } }
+    );
+    if (!doc) return false;
+    return true;
+  }
+
+  async pullChosenModule(user: User, module_id: string): Promise<boolean> {
+    await connectToDatabase();
+    const parsedId = Number.parseInt(module_id, 10);
+    const doc = await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { chosenModules: parsedId } }
+    );
+    if (!doc) return false;
+    return true;
   }
 }

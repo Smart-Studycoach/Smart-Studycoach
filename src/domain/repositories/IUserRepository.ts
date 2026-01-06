@@ -6,4 +6,5 @@ export interface IUserRepository {
   create(user: CreateUserDTO & { password: string }): Promise<User>;
   delete(id: string): Promise<boolean>;
   existsByEmail(email: string): Promise<boolean>;
+  hasChosenModule(user: User, module_id: string): Promise<boolean>;
 }
