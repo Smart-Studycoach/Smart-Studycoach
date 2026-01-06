@@ -9,8 +9,6 @@ import { authService } from "@/infrastructure/container";
 export function requireAuth(
   request: NextRequest
 ): { userId: string } | NextResponse {
-  console.log("requireAuth called");
-  console.log("Request headers:", request.headers);
   const token = getTokenFromRequest(request);
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

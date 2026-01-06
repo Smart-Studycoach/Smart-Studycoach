@@ -37,13 +37,4 @@ export class ModuleService {
       return this.moduleRepository.pullChosenModule(user, module_id);
     }
   }
-
-  async hasUserChosenModule(
-    userId: string,
-    module_id: string
-  ): Promise<boolean> {
-    const user: User | null = await this.userRepository.findById(userId);
-    if (!user) return false;
-    return this.userRepository.hasChosenModule(user, module_id);
-  }
 }

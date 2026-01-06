@@ -27,6 +27,27 @@ export class UserRepository implements IUserRepository {
     return doc ? this.mapToEntity(doc as IUserDocument) : null;
   }
 
+  async findProfileById(id: string): Promise<{
+    _id: string;
+    name: string;
+    studentProfile: string;
+    favoriteModules?: string[];
+    chosenModules?: string[];
+  } | null> {
+    await connectToDatabase();
+    const doc = await UserModel.findById(id).select(
+      "name studentProfile favoriteModules chosenModules"
+    );
+    if (!doc) return null;
+    return {
+      _id: (doc as IUserDocument)._id.toString(),
+      name: (doc as IUserDocument).name,
+      studentProfile: (doc as IUserDocument).studentProfile,
+      favoriteModules: (doc as IUserDocument).favoriteModules,
+      chosenModules: (doc as IUserDocument).chosenModules,
+    };
+  }
+
   async create(userData: CreateUserDTO & { password: string }): Promise<User> {
     await connectToDatabase();
     const doc = await UserModel.create({
