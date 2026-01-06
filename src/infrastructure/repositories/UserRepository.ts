@@ -66,4 +66,44 @@ export class UserRepository implements IUserRepository {
     });
     return doc !== null;
   }
+
+  async addFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: user._id },
+      { $addToSet: { favoriteModules: module_id } }
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async removeFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { favoriteModules: module_id } }
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async hasFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    await connectToDatabase();
+
+    const exists = await UserModel.exists({
+      _id: user._id,
+      favoriteModules: module_id,
+    });
+
+    return Boolean(exists);
+  }
+
+  async getFavoriteModules(user: User): Promise<number[]> {
+    await connectToDatabase();
+
+    const foundUser = await UserModel.findById(user._id).select("favoriteModules");
+    return foundUser?.favoriteModules ?? [];
+  }
 }
