@@ -24,17 +24,14 @@ export class ModuleService {
   }
 
   async updateChosenModule(
-    userId: string,
+    user_id: string,
     module_id: string,
     chosen: boolean
   ): Promise<boolean> {
-    const user: User | null = await this.userRepository.findById(userId);
-    if (!user) return false;
-
     if (chosen) {
-      return this.moduleRepository.addChosenModule(user, module_id);
+      return this.moduleRepository.addChosenModule(user_id, module_id);
     } else {
-      return this.moduleRepository.pullChosenModule(user, module_id);
+      return this.moduleRepository.pullChosenModule(user_id, module_id);
     }
   }
 }

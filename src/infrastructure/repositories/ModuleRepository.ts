@@ -1,7 +1,12 @@
 // Infrastructure - Repository Implementation
 // Implements the domain interface using Mongoose
 
-import { Module, IModuleRepository, ModuleFilters } from "@/domain";
+import {
+  Module,
+  ModuleMinimal,
+  IModuleRepository,
+  ModuleFilters,
+} from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
 import {
@@ -74,22 +79,41 @@ export class ModuleRepository implements IModuleRepository {
     return this.mapToEntity(doc as IModuleDocument);
   }
 
-  async addChosenModule(user: User, module_id: string): Promise<boolean> {
+  async findMinimalsByIds(
+    module_ids: string[]
+  ): Promise<ModuleMinimal[] | null> {
+    await connectToDatabase();
+    let parsedIds: number[] = [];
+    module_ids.forEach((module_id, i) => {
+      parsedIds.push(Number.parseInt(module_id, 10));
+    });
+
+    const doc = await ModuleModel.find({
+      _id: { $in: parsedIds },
+    }).select("_id name");
+    if (!doc) return null;
+    return doc.map((d) => ({
+      module_id: (d as IModuleDocument)._id.toString(),
+      name: (d as IModuleDocument).name,
+    }));
+  }
+
+  async addChosenModule(user_id: string, module_id: string): Promise<boolean> {
     await connectToDatabase();
     const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.updateOne(
-      { _id: user._id },
+      { _id: user_id },
       { $addToSet: { chosenModules: parsedId } }
     );
     if (!doc) return false;
     return true;
   }
 
-  async pullChosenModule(user: User, module_id: string): Promise<boolean> {
+  async pullChosenModule(user_id: string, module_id: string): Promise<boolean> {
     await connectToDatabase();
     const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.updateOne(
-      { _id: user._id },
+      { _id: user_id },
       { $pull: { chosenModules: parsedId } }
     );
     if (!doc) return false;

@@ -10,5 +10,5 @@ export async function GET(request: NextRequest) {
   if (!profile)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  return NextResponse.json({ profile: profile });
+  return NextResponse.json(profile);
 }

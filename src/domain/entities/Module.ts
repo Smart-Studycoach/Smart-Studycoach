@@ -14,3 +14,8 @@ export interface Module {
   available_spots: number;
   start_date: string;
 }
+
+export interface ModuleMinimal {
+  module_id: string;
+  name: string;
+}
