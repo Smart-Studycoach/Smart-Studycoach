@@ -130,6 +130,64 @@ Or provide the `token` cookie (HttpOnly) which the server will also accept.
 }
 ```
 
+### PATCH `/api/auth`
+
+Update current user details (name and/or email). Requires authentication.
+
+**Headers:**
+
+Either supply the header or rely on the HttpOnly cookie set at login/register:
+
+```
+Authorization: Bearer {token}
+```
+
+Or provide the `token` cookie (HttpOnly) which the server will also accept.
+
+**Request Body:**
+
+At least one of the fields should be provided.
+
+```json
+{
+  "name": "string (optional)",
+  "email": "string (optional)"
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "user": {
+    "_id": "string",
+    "email": "string",
+    "name": "string",
+    "studentProfile": "string",
+    "favoriteModules": ["string"],
+    "chosenModules": ["string"],
+    "createdAt": "string",
+    "updatedAt": "string"
+  }
+}
+```
+
+**Error Response:** `401 Unauthorized`
+
+```json
+{
+  "error": "No token provided"
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to update user"
+}
+```
+
 ### DELETE `/api/auth`
 
 Delete current user account (requires authentication).
@@ -153,6 +211,78 @@ Or provide the `token` cookie (HttpOnly) which the server will also accept.
 ```
 
 Note: On successful account deletion the server clears the `token` cookie.
+
+### PATCH `/api/auth/password`
+
+Update user password (requires authentication and old password verification).
+
+**Headers:**
+
+Either supply the header or rely on the HttpOnly cookie set at login/register:
+
+```
+Authorization: Bearer {token}
+```
+
+Or provide the `token` cookie (HttpOnly) which the server will also accept.
+
+**Request Body:**
+
+```json
+{
+  "oldPassword": "string",
+  "newPassword": "string"
+}
+```
+
+**Password Requirements:**
+
+- Minimum 6 characters
+- Must provide correct old password for verification
+
+**Response:** `200 OK`
+
+```json
+{
+  "message": "Password updated successfully"
+}
+```
+
+**Error Response:** `400 Bad Request`
+
+```json
+{
+  "error": "Both old and new passwords are required"
+}
+```
+
+```json
+{
+  "error": "New password must be at least 6 characters"
+}
+```
+
+**Error Response:** `401 Unauthorized`
+
+```json
+{
+  "error": "No token provided"
+}
+```
+
+```json
+{
+  "error": "Current password is incorrect"
+}
+```
+
+**Error Response:** `500 Internal Server Error`
+
+```json
+{
+  "error": "Failed to update password"
+}
+```
 
 ## Modules
 
