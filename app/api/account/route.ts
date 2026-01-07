@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
       profile.chosen_modules
     );
     if (chosenModules) {
-      console.log(chosenModules);
       data.chosen_modules = chosenModules;
     }
     // hoe kan je dan hier nog de extra key toevoegen?
