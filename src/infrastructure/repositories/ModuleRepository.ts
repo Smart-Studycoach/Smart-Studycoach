@@ -98,8 +98,8 @@ export class ModuleRepository implements IModuleRepository {
       _id: { $in: _ids },
     }).select("module_id name");
     if (!doc) return null;
-    return doc.map((d, i) => ({
-      _id: _ids[i],
+    return doc.map((d) => ({
+      _id: (d as IModuleDocument)._id.toString(),
       module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
