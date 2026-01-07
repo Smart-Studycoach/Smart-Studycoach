@@ -45,9 +45,12 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ message: "Password updated successfully" });
   } catch (error) {
     console.error("Update password failed:", error);
-    
+
     // Check if error is about incorrect old password
-    if (error instanceof Error && error.message === "Current password is incorrect") {
+    if (
+      error instanceof Error &&
+      error.message === "Current password is incorrect"
+    ) {
       return NextResponse.json(
         { error: "Current password is incorrect" },
         { status: 401 }
