@@ -52,6 +52,11 @@ export class UserRepository implements IUserRepository {
       },
       { new: true }
     );
+
+    if (!doc) {
+      throw new Error(`User with id ${user._id} not found`);
+    }
+
     return this.mapToEntity(doc as IUserDocument);
   }
 
