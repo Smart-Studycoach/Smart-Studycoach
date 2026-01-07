@@ -1,6 +1,6 @@
 "use client";
 
-import { UserProfileDTO, UserProfileInfo } from "@/domain/entities/User";
+import { UserProfileInfo } from "@/domain/entities/User";
 import { ModuleMinimal } from "@/domain";
 import { useEffect, useState } from "react";
 import { MiniModuleCard } from "@/components/MiniModuleCard";
