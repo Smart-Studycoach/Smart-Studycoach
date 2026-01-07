@@ -125,7 +125,6 @@ export default function ModuleDetailPage() {
           <span className="tag">NL</span>
           <span className="tag">{module.studycredit}-ECTS</span>
           <span className="tag">{module.level}</span>
-          <span className="tag tag-green">{module.estimated_difficulty}%</span>
         </div>
 
         {module.shortdescription && module.shortdescription.length > 0 && (
