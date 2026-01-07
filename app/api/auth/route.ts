@@ -46,12 +46,41 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { name, email } = await request.json();
+    const body = await request.json();
+    const rawName = typeof body?.name === "string" ? body.name : undefined;
+    const rawEmail = typeof body?.email === "string" ? body.email : undefined;
+
+    const name = rawName?.trim();
+    const email = rawEmail?.trim();
+
+    if (!name && !email) {
+      return NextResponse.json(
+        { error: "No fields provided for update" },
+        { status: 400 }
+      );
+    }
+
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email)) {
+        return NextResponse.json(
+          { error: "Invalid email format" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const updateData: { name?: string; email?: string } = {};
+
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+
     // Update user
     const updatedUser = await authApplicationService.updateUser(
       authResult.userId,
-      { name, email }
+      updateData
     );
+
     return NextResponse.json({ user: updatedUser });
   } catch (error) {
     console.error("Update user failed:", error);

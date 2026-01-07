@@ -28,9 +28,34 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    if (newPassword.length < 6) {
+    // 12 characters
+    if (newPassword.length < 12) {
       return NextResponse.json(
-        { error: "New password must be at least 6 characters" },
+        { error: "Password must be at least 12 characters long" },
+        { status: 400 }
+      );
+    }
+
+    // Capital letter
+    if (!/[A-Z]/.test(newPassword)) {
+      return NextResponse.json(
+        { error: "Password must contain at least one uppercase letter" },
+        { status: 400 }
+      );
+    }
+
+    // Number
+    if (!/[0-9]/.test(newPassword)) {
+      return NextResponse.json(
+        { error: "Password must contain at least one number" },
+        { status: 400 }
+      );
+    }
+
+    // Special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      return NextResponse.json(
+        { error: "Password must contain at least one special character" },
         { status: 400 }
       );
     }
