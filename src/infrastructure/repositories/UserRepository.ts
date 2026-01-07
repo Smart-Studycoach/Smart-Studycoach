@@ -38,6 +38,23 @@ export class UserRepository implements IUserRepository {
     return this.mapToEntity(doc as IUserDocument);
   }
 
+  async update(user: User): Promise<User> {
+    await connectToDatabase();
+    const doc = await UserModel.findByIdAndUpdate(
+      user._id,
+      {
+        email: user.email.toLowerCase(),
+        name: user.name,
+        password: user.password,
+        studentProfile: user.studentProfile,
+        chosenModules: user.chosenModules,
+        favoriteModules: user.favoriteModules,
+      },
+      { new: true }
+    );
+    return this.mapToEntity(doc as IUserDocument);
+  }
+
   async delete(id: string): Promise<boolean> {
     try {
       await connectToDatabase();

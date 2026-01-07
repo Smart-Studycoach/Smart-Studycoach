@@ -1,7 +1,7 @@
 export interface User {
   _id: string;
   email: string;
-  password: string; 
+  password: string;
   name: string;
   studentProfile: string;
   favoriteModules?: string[];
@@ -20,6 +20,11 @@ export interface CreateUserDTO {
 export interface LoginDTO {
   email: string;
   password: string;
+}
+
+export interface UpdateUserDTO {
+  name?: string;
+  email?: string;
 }
 
 export interface AuthResponse {

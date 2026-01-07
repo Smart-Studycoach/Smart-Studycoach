@@ -30,6 +30,38 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Update name or email
+export async function PATCH(request: NextRequest) {
+  try {
+    const authResult = getUserIdFromRequest(request);
+    if ("error" in authResult) {
+      return NextResponse.json(
+        {
+          error:
+            authResult.error === "no-token"
+              ? "No token provided"
+              : "Invalid or expired token",
+        },
+        { status: 401 }
+      );
+    }
+
+    const { name, email } = await request.json();
+    // Update user
+    const updatedUser = await authApplicationService.updateUser(
+      authResult.userId,
+      { name, email }
+    );
+    return NextResponse.json({ user: updatedUser });
+  } catch (error) {
+    console.error("Update user failed:", error);
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 }
+    );
+  }
+}
+
 // Delete user
 export async function DELETE(request: NextRequest) {
   try {
