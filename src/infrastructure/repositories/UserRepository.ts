@@ -1,4 +1,4 @@
-import { User, CreateUserDTO, IUserRepository } from "@/domain";
+import { User, CreateUserDTO, IUserRepository, UserProfileDTO } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
 
@@ -27,13 +27,7 @@ export class UserRepository implements IUserRepository {
     return doc ? this.mapToEntity(doc as IUserDocument) : null;
   }
 
-  async findProfileById(id: string): Promise<{
-    _id: string;
-    name: string;
-    studentProfile: string;
-    favoriteModules?: string[];
-    chosenModules?: string[];
-  } | null> {
+  async findProfileById(id: string): Promise<UserProfileDTO | null> {
     await connectToDatabase();
     const doc = await UserModel.findById(id).select(
       "name studentProfile favoriteModules chosenModules"
@@ -42,9 +36,9 @@ export class UserRepository implements IUserRepository {
     return {
       _id: (doc as IUserDocument)._id.toString(),
       name: (doc as IUserDocument).name,
-      studentProfile: (doc as IUserDocument).studentProfile,
-      favoriteModules: (doc as IUserDocument).favoriteModules,
-      chosenModules: (doc as IUserDocument).chosenModules,
+      student_profile: (doc as IUserDocument).studentProfile,
+      favorite_modules: (doc as IUserDocument).favoriteModules,
+      chosen_modules: (doc as IUserDocument).chosenModules,
     };
   }
 

@@ -52,9 +52,18 @@ export async function POST(
       );
     }
 
+    const _id = await moduleService.getMongoIdByModuleId(id);
+
+    if (!_id) {
+      return NextResponse.json(
+        { error: "Failed to update module choice" },
+        { status: 404 }
+      );
+    }
+
     const success = await moduleService.updateChosenModule(
       userId,
-      id,
+      _id,
       body.chosen
     );
     if (!success) {

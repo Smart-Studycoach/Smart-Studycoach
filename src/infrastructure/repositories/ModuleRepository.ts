@@ -6,6 +6,7 @@ import {
   ModuleMinimal,
   IModuleRepository,
   ModuleFilters,
+  mongoDB_id,
 } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
@@ -79,42 +80,52 @@ export class ModuleRepository implements IModuleRepository {
     return this.mapToEntity(doc as IModuleDocument);
   }
 
-  async findMinimalsByIds(
-    module_ids: string[]
-  ): Promise<ModuleMinimal[] | null> {
+  async findMongoIdByModuleId(module_id: string): Promise<mongoDB_id | null> {
     await connectToDatabase();
-    let parsedIds: number[] = [];
-    module_ids.forEach((module_id, i) => {
-      parsedIds.push(Number.parseInt(module_id, 10));
-    });
+    const parsedId = Number.parseInt(module_id, 10);
+    if (Number.isNaN(parsedId)) return null;
+    const doc = await ModuleModel.findOne({ module_id: parsedId }).select(
+      "_id"
+    );
+    if (!doc) return null;
+    return (doc as IModuleDocument)._id.toString();
+  }
+
+  async findMinimalsByIds(_ids: mongoDB_id[]): Promise<ModuleMinimal[] | null> {
+    await connectToDatabase();
 
     const doc = await ModuleModel.find({
-      _id: { $in: parsedIds },
-    }).select("_id name");
+      _id: { $in: _ids },
+    }).select("module_id name");
     if (!doc) return null;
-    return doc.map((d) => ({
-      module_id: (d as IModuleDocument)._id.toString(),
+    return doc.map((d, i) => ({
+      _id: _ids[i],
+      module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
   }
 
-  async addChosenModule(user_id: string, module_id: string): Promise<boolean> {
+  async addChosenModule(
+    user_id: mongoDB_id,
+    _id: mongoDB_id
+  ): Promise<boolean> {
     await connectToDatabase();
-    const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.updateOne(
       { _id: user_id },
-      { $addToSet: { chosenModules: parsedId } }
+      { $addToSet: { chosenModules: _id } }
     );
     if (!doc) return false;
     return true;
   }
 
-  async pullChosenModule(user_id: string, module_id: string): Promise<boolean> {
+  async pullChosenModule(
+    user_id: mongoDB_id,
+    _id: mongoDB_id
+  ): Promise<boolean> {
     await connectToDatabase();
-    const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.updateOne(
       { _id: user_id },
-      { $pull: { chosenModules: parsedId } }
+      { $pull: { chosenModules: _id } }
     );
     if (!doc) return false;
     return true;

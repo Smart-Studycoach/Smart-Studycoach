@@ -1,37 +1,29 @@
 "use client";
 
-import { UserProfileDTO } from "@/domain/entities/User";
+import { UserProfileDTO, UserProfileInfo } from "@/domain/entities/User";
+import { ModuleMinimal } from "@/domain";
 import { useEffect, useState } from "react";
+import { MiniModuleCard } from "@/components/MiniModuleCard";
 
-interface ModuleMinimal {
-  module_id: string;
-  name: string;
-}
+import "./styles.css";
 
-interface Module {
-  _id: string;
-  module_id: number;
-  name: string;
-  shortdescription: string[];
-  description: string;
-  studycredit: number;
-  location: string[];
-  level: string;
-  learningoutcomes: string;
-  estimated_difficulty: number;
-  available_spots: number;
-  start_date: string;
-}
-interface UserProfileInfo {
-  _id: string;
-  name: string;
-  student_profile: string;
-  favorite_modules: ModuleMinimal[];
-  chosen_modules: ModuleMinimal[];
-}
+// interface Module {
+//   _id: string;
+//   module_id: number;
+//   name: string;
+//   shortdescription: string[];
+//   description: string;
+//   studycredit: number;
+//   location: string[];
+//   level: string;
+//   learningoutcomes: string;
+//   estimated_difficulty: number;
+//   available_spots: number;
+//   start_date: string;
+// }
 
 export default function Account() {
-  const [userProfile, setUserProfile] = useState<UserProfileDTO | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfileInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -39,24 +31,13 @@ export default function Account() {
     const fetchAccount = async () => {
       try {
         const response = await fetch("/api/account");
-        const data: UserProfileDTO | null = await response.json();
+        const data: UserProfileInfo | null = await response.json();
 
         if (!response.ok) {
           setError("Failed to load user profile");
           return;
         }
         setUserProfile(data); // moet zo weg
-
-        // if (data != null) {
-        //   if (data.chosenModules != undefined) {
-
-        //   }
-        // }
-
-        // let profile: UserProfileInfo = {
-        //   _id: data._id,
-        //   name: data.name,
-        // };
       } catch (err) {
         setError("Failed to load user profile");
         console.error(err);
@@ -70,27 +51,29 @@ export default function Account() {
 
   return (
     <div>
-      <h1>Account</h1>
-
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {userProfile && (
-        <div>
-          <p>
-            <strong>Name:</strong> {userProfile.name}
-          </p>
-          <p>
-            <strong>Student Profile:</strong> {userProfile.studentProfile}
-          </p>
-          <p>
-            <strong>Favorite Modules:</strong>{" "}
-            {userProfile.favoriteModules?.join(", ") || "None"}
-          </p>
-          <p>
-            <strong>Chosen Modules:</strong>{" "}
-            {userProfile.chosenModules?.join(", ") || "None"}
-          </p>
+        <div className="account-page">
+          <div className="account-header">
+            <h2 className="account-name">{userProfile.name}</h2>
+            <p className="account-profile">{userProfile.student_profile}</p>
+          </div>
+
+          <section className="chosen-modules">
+            <h3>Gekozen modules</h3>
+            {userProfile.chosen_modules &&
+            userProfile.chosen_modules.length > 0 ? (
+              <div className="mini-grid">
+                {userProfile.chosen_modules.map((module: ModuleMinimal) => (
+                  <MiniModuleCard key={module.module_id} module={module} />
+                ))}
+              </div>
+            ) : (
+              <p className="empty">Nog geen gekozen modules.</p>
+            )}
+          </section>
         </div>
       )}
     </div>
