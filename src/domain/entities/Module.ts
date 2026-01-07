@@ -14,3 +14,9 @@ export interface Module {
   available_spots: number;
   start_date: string;
 }
+
+export interface ModuleMinimal {
+  mongodb_module_id: string;
+  module_id: number;
+  name: string;
+}

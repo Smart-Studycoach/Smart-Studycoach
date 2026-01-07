@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { moduleService } from "@/infrastructure/container";
+import { userService } from "@/infrastructure/container";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
 export async function GET(
@@ -20,7 +21,7 @@ export async function GET(
 
     const { userId } = authResult;
 
-    const module_chosen = await moduleService.hasUserChosenModule(userId, id);
+    const module_chosen = await userService.hasUserChosenModule(userId, id);
 
     return NextResponse.json({ module, module_chosen });
   } catch (error) {
@@ -51,9 +52,18 @@ export async function POST(
       );
     }
 
+    const _id = await moduleService.getMongoIdByModuleId(id);
+
+    if (!_id) {
+      return NextResponse.json(
+        { error: "Failed to update module choice" },
+        { status: 404 }
+      );
+    }
+
     const success = await moduleService.updateChosenModule(
       userId,
-      id,
+      _id,
       body.chosen
     );
     if (!success) {

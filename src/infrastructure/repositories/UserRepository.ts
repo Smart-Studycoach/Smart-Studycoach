@@ -1,4 +1,4 @@
-import { User, CreateUserDTO, IUserRepository } from "@/domain";
+import { User, CreateUserDTO, IUserRepository, UserProfileDTO } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
 
@@ -25,6 +25,21 @@ export class UserRepository implements IUserRepository {
     await connectToDatabase();
     const doc = await UserModel.findOne({ email: email.toLowerCase() });
     return doc ? this.mapToEntity(doc as IUserDocument) : null;
+  }
+
+  async findProfileById(id: string): Promise<UserProfileDTO | null> {
+    await connectToDatabase();
+    const doc = await UserModel.findById(id).select(
+      "name studentProfile favoriteModules chosenModules"
+    );
+    if (!doc) return null;
+    return {
+      _id: (doc as IUserDocument)._id.toString(),
+      name: (doc as IUserDocument).name,
+      student_profile: (doc as IUserDocument).studentProfile,
+      favorite_modules: (doc as IUserDocument).favoriteModules,
+      chosen_modules: (doc as IUserDocument).chosenModules,
+    };
   }
 
   async create(userData: CreateUserDTO & { password: string }): Promise<User> {
