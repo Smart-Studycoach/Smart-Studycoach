@@ -7,21 +7,6 @@ import { MiniModuleCard } from "@/components/MiniModuleCard";
 
 import "./styles.css";
 
-// interface Module {
-//   _id: string;
-//   module_id: number;
-//   name: string;
-//   shortdescription: string[];
-//   description: string;
-//   studycredit: number;
-//   location: string[];
-//   level: string;
-//   learningoutcomes: string;
-//   estimated_difficulty: number;
-//   available_spots: number;
-//   start_date: string;
-// }
-
 export default function Account() {
   const [userProfile, setUserProfile] = useState<UserProfileInfo | null>(null);
   const [loading, setLoading] = useState(true);
