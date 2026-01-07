@@ -15,10 +15,8 @@ export interface Module {
   start_date: string;
 }
 
-export type mongoDB_id = string;
-
 export interface ModuleMinimal {
-  _id: mongoDB_id;
+  mongodb_module_id: string;
   module_id: number;
   name: string;
 }

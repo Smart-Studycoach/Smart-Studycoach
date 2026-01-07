@@ -4,6 +4,7 @@ import { userService } from "@/infrastructure/container";
 import { moduleService } from "@/infrastructure/container";
 import { UserProfileInfo } from "@/domain";
 
+export async function GET(request: NextRequest) {
   try {
     const auth = requireAuth(request);
     if (auth instanceof NextResponse) return auth;
@@ -13,7 +14,7 @@ import { UserProfileInfo } from "@/domain";
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const data: UserProfileInfo = {
-      _id: profile._id,
+      mongodb_module_id: profile.mongodb_module_id,
       name: profile.name,
       student_profile: profile.student_profile,
     };
@@ -23,7 +24,6 @@ import { UserProfileInfo } from "@/domain";
         profile.chosen_modules
       );
       if (chosenModules) {
-        console.log(chosenModules);
         data.chosen_modules = chosenModules;
       }
       // hoe kan je dan hier nog de extra key toevoegen?

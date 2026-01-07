@@ -6,7 +6,6 @@ import {
   ModuleMinimal,
   IModuleRepository,
   ModuleFilters,
-  mongoDB_id,
 } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
@@ -80,7 +79,7 @@ export class ModuleRepository implements IModuleRepository {
     return this.mapToEntity(doc as IModuleDocument);
   }
 
-  async findMongoIdByModuleId(module_id: string): Promise<mongoDB_id | null> {
+  async findMongoIdByModuleId(module_id: string): Promise<string | null> {
     await connectToDatabase();
     const parsedId = Number.parseInt(module_id, 10);
     if (Number.isNaN(parsedId)) return null;
@@ -91,24 +90,23 @@ export class ModuleRepository implements IModuleRepository {
     return (doc as IModuleDocument)._id.toString();
   }
 
-  async findMinimalsByIds(_ids: mongoDB_id[]): Promise<ModuleMinimal[] | null> {
+  async findMinimalsByIds(
+    mongodb_module_ids: string[]
+  ): Promise<ModuleMinimal[] | null> {
     await connectToDatabase();
 
     const doc = await ModuleModel.find({
-      _id: { $in: _ids },
+      _id: { $in: mongodb_module_ids },
     }).select("module_id name");
     if (!doc) return null;
     return doc.map((d) => ({
-      _id: (d as IModuleDocument)._id.toString(),
+      mongodb_module_id: (d as IModuleDocument)._id.toString(),
       module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
   }
 
-  async addChosenModule(
-    user_id: mongoDB_id,
-    _id: mongoDB_id
-  ): Promise<boolean> {
+  async addChosenModule(user_id: string, _id: string): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.updateOne(
       { _id: user_id },
@@ -118,10 +116,7 @@ export class ModuleRepository implements IModuleRepository {
     return true;
   }
 
-  async pullChosenModule(
-    user_id: mongoDB_id,
-    _id: mongoDB_id
-  ): Promise<boolean> {
+  async pullChosenModule(user_id: string, _id: string): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.updateOne(
       { _id: user_id },

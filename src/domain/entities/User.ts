@@ -1,4 +1,4 @@
-import { ModuleMinimal, mongoDB_id } from "@/domain";
+import { ModuleMinimal } from "@/domain";
 
 export interface User {
   _id: string;
@@ -33,8 +33,8 @@ export interface UserProfileDTO {
   _id: string;
   name: string;
   student_profile: string;
-  favorite_modules?: mongoDB_id[];
-  chosen_modules?: mongoDB_id[];
+  favorite_modules?: string[];
+  chosen_modules?: string[];
 }
 
 export interface UserProfileInfo {

@@ -7,7 +7,6 @@ import {
   IModuleRepository,
   ModuleFilters,
   IUserRepository,
-  mongoDB_id,
 } from "@/domain";
 
 export class ModuleService {
@@ -25,26 +24,28 @@ export class ModuleService {
   }
 
   async getModulesByModule_Ids(
-    _ids: mongoDB_id[]
+    mongodb_module_ids: string[]
   ): Promise<ModuleMinimal[] | null> {
-    const modules = await this.moduleRepository.findMinimalsByIds(_ids);
+    const modules = await this.moduleRepository.findMinimalsByIds(
+      mongodb_module_ids
+    );
     if (!modules) return null;
     return modules;
   }
 
   async updateChosenModule(
-    user_id: mongoDB_id,
-    _id: mongoDB_id,
+    user_id: string,
+    mongodb_module_id: string,
     chosen: boolean
   ): Promise<boolean> {
     if (chosen) {
-      return this.moduleRepository.addChosenModule(user_id, _id);
+      return this.moduleRepository.addChosenModule(user_id, mongodb_module_id);
     } else {
-      return this.moduleRepository.pullChosenModule(user_id, _id);
+      return this.moduleRepository.pullChosenModule(user_id, mongodb_module_id);
     }
   }
 
-  async getMongoIdByModuleId(module_id: string): Promise<mongoDB_id | null> {
+  async getMongoIdByModuleId(module_id: string): Promise<string | null> {
     return this.moduleRepository.findMongoIdByModuleId(module_id);
   }
 }
