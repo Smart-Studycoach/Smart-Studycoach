@@ -4,7 +4,7 @@ import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const authResult = requireAuth(request);
@@ -13,19 +13,20 @@ export async function GET(
     }
 
     const { userId } = authResult;
-    const moduleId = Number(params.id);
+
+    const params = await context.params;
+
+    const { id } = params;
+    const moduleId = Number(id);
 
     if (Number.isNaN(moduleId)) {
       return NextResponse.json(
-        { error: "Invalid module id" },
+        { error: "Invalid module id: " + id },
         { status: 400 }
       );
     }
 
-    const favorite = await userService.hasFavoriteModule(
-      userId,
-      moduleId
-    );
+    const favorite = await userService.hasFavoriteModule(userId, moduleId);
 
     return NextResponse.json({ favorite });
   } catch (error) {
@@ -39,20 +40,21 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
 
     const { userId } = authResult;
-    const moduleId = Number(params.id);
+
+    const params = await context.params;
+
+    const { id } = params;
+    const moduleId = Number(id);
 
     if (Number.isNaN(moduleId)) {
-      return NextResponse.json(
-        { error: "Invalid module id" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid module id" }, { status: 400 });
     }
 
     const body = await request.json();

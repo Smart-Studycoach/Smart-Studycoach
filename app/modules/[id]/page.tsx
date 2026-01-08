@@ -45,6 +45,16 @@ export default function ModuleDetailPage() {
         setModule(data.module);
         setLoading(false);
         setIsRegistered(data.module_chosen);
+        // fetch favorite state for this module (if user is authenticated)
+        try {
+          const favRes = await fetch(`/api/favorites/${params.id}`);
+          const favData = await favRes.json();
+          if (favRes.ok) {
+            setFavorited(Boolean(favData.favorite));
+          }
+        } catch (err) {
+          console.error("Failed to load favorite state", err);
+        }
       } catch (err) {
         setError("Failed to load module");
         setLoading(false);
@@ -94,9 +104,25 @@ export default function ModuleDetailPage() {
     const newFav = !favorited;
     setFavorited(newFav);
 
-    // No backend implemented for favorites yet — keep client-side optimistic toggle.
-    // If a backend exists, replace this with a fetch call similar to registering.
-    setTimeout(() => setFavoriteLoading(false), 300);
+    try {
+      const response = await fetch(`/api/favorites/${params.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ favorite: newFav }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setFavorited(!newFav); // revert
+        setActionError(data.error || "Failed to update favorite");
+      }
+    } catch (err) {
+      setFavorited(!newFav); // revert
+      setActionError("Failed to update favorite");
+      console.error(err);
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
 
   if (loading) {
