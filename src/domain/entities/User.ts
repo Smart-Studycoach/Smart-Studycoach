@@ -6,8 +6,8 @@ export interface User {
   password: string;
   name: string;
   studentProfile: string;
-  favoriteModules?: string[];
-  chosenModules?: string[];
+  favoriteModules?: number[];
+  chosenModules?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
