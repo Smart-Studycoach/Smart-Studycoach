@@ -18,7 +18,7 @@ export class ModuleRepository implements IModuleRepository {
   constructor(private readonly userRepository: IUserRepository) {}
   private mapToEntity(doc: IModuleDocument): Module {
     return {
-      _id: doc._id.toString(),
+      /*_id: doc._id.toString(),*/
       module_id: doc.module_id,
       name: doc.name,
       shortdescription: doc.shortdescription,

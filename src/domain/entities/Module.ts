@@ -1,7 +1,7 @@
 // Domain Entity - Pure business object with no external dependencies
 
 export interface Module {
-  _id: string;
+  //_id: string;
   module_id: number;
   name: string;
   shortdescription: string[];

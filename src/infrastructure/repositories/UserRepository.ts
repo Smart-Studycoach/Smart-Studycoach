@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { User, CreateUserDTO, IUserRepository } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
@@ -68,12 +69,18 @@ export class UserRepository implements IUserRepository {
   }
 
   async addFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    console.log("ADD FAVORITE", {
+      userId: user._id,
+      module_id,
+    });
+
     await connectToDatabase();
 
     const result = await UserModel.updateOne(
-      { _id: user._id },
+      { _id: new Types.ObjectId(user._id) },
       { $addToSet: { favoriteModules: module_id } }
     );
+    console.log("UPDATE RESULT", result);
 
     return result.modifiedCount > 0;
   }
