@@ -1,4 +1,7 @@
+import { Types } from "mongoose";
+
 import { User, CreateUserDTO, IUserRepository, UserProfileDTO } from "@/domain";
+
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
 
@@ -102,5 +105,53 @@ export class UserRepository implements IUserRepository {
       chosenModules: parsedId,
     });
     return doc !== null;
+  }
+
+  async addFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    console.log("ADD FAVORITE", {
+      userId: user._id,
+      module_id,
+    });
+
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: new Types.ObjectId(user._id) },
+      { $addToSet: { favoriteModules: module_id } }
+    );
+    console.log("UPDATE RESULT", result);
+
+    return result.modifiedCount > 0;
+  }
+
+  async removeFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { favoriteModules: module_id } }
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async hasFavoriteModule(user: User, module_id: number): Promise<boolean> {
+    await connectToDatabase();
+
+    const exists = await UserModel.exists({
+      _id: user._id,
+      favoriteModules: module_id,
+    });
+
+    return Boolean(exists);
+  }
+
+  async getFavoriteModules(user: User): Promise<number[]> {
+    await connectToDatabase();
+
+    const foundUser = await UserModel.findById(user._id).select(
+      "favoriteModules"
+    );
+    return foundUser?.favoriteModules ?? [];
   }
 }

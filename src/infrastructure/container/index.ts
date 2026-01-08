@@ -6,6 +6,7 @@ import {
   AuthApplicationService,
   UserService,
 } from "@/application";
+
 import { ModuleRepository } from "../repositories/ModuleRepository";
 import { UserRepository } from "../repositories/UserRepository";
 import { AuthServiceInfrastructure } from "../services/AuthServiceInfrastructure";

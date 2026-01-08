@@ -35,7 +35,7 @@ const UserSchema = new Schema<IUserDocument>(
       trim: true,
     },
     favoriteModules: {
-      type: [String],
+      type: [Number],
       default: [],
     },
     chosenModules: {
