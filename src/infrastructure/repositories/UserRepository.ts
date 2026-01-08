@@ -1,5 +1,7 @@
 import { Types } from "mongoose";
-import { User, CreateUserDTO, IUserRepository } from "@/domain";
+
+import { User, CreateUserDTO, IUserRepository, UserProfileDTO } from "@/domain";
+
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
 
@@ -28,6 +30,21 @@ export class UserRepository implements IUserRepository {
     return doc ? this.mapToEntity(doc as IUserDocument) : null;
   }
 
+  async findProfileById(id: string): Promise<UserProfileDTO | null> {
+    await connectToDatabase();
+    const doc = await UserModel.findById(id).select(
+      "name studentProfile favoriteModules chosenModules"
+    );
+    if (!doc) return null;
+    return {
+      _id: (doc as IUserDocument)._id.toString(),
+      name: (doc as IUserDocument).name,
+      student_profile: (doc as IUserDocument).studentProfile,
+      favorite_modules: (doc as IUserDocument).favoriteModules,
+      chosen_modules: (doc as IUserDocument).chosenModules,
+    };
+  }
+
   async create(userData: CreateUserDTO & { password: string }): Promise<User> {
     await connectToDatabase();
     const doc = await UserModel.create({
@@ -36,6 +53,28 @@ export class UserRepository implements IUserRepository {
       name: userData.name,
       studentProfile: userData.studentProfile,
     });
+    return this.mapToEntity(doc as IUserDocument);
+  }
+
+  async update(user: User): Promise<User> {
+    await connectToDatabase();
+    const doc = await UserModel.findByIdAndUpdate(
+      user._id,
+      {
+        email: user.email.toLowerCase(),
+        name: user.name,
+        password: user.password,
+        studentProfile: user.studentProfile,
+        chosenModules: user.chosenModules,
+        favoriteModules: user.favoriteModules,
+      },
+      { new: true }
+    );
+
+    if (!doc) {
+      throw new Error(`User with id ${user._id} not found`);
+    }
+
     return this.mapToEntity(doc as IUserDocument);
   }
 
@@ -110,7 +149,9 @@ export class UserRepository implements IUserRepository {
   async getFavoriteModules(user: User): Promise<number[]> {
     await connectToDatabase();
 
-    const foundUser = await UserModel.findById(user._id).select("favoriteModules");
+    const foundUser = await UserModel.findById(user._id).select(
+      "favoriteModules"
+    );
     return foundUser?.favoriteModules ?? [];
   }
 }

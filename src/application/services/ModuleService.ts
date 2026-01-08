@@ -3,10 +3,10 @@
 
 import {
   Module,
+  ModuleMinimal,
   IModuleRepository,
   ModuleFilters,
   IUserRepository,
-  User,
 } from "@/domain";
 
 export class ModuleService {
@@ -23,27 +23,29 @@ export class ModuleService {
     return this.moduleRepository.findById(id);
   }
 
+  async getModulesByModule_Ids(
+    mongodb_module_ids: string[]
+  ): Promise<ModuleMinimal[] | null> {
+    const modules = await this.moduleRepository.findMinimalsByIds(
+      mongodb_module_ids
+    );
+    if (!modules) return null;
+    return modules;
+  }
+
   async updateChosenModule(
-    userId: string,
-    module_id: string,
+    user_id: string,
+    mongodb_module_id: string,
     chosen: boolean
   ): Promise<boolean> {
-    const user: User | null = await this.userRepository.findById(userId);
-    if (!user) return false;
-
     if (chosen) {
-      return this.moduleRepository.addChosenModule(user, module_id);
+      return this.moduleRepository.addChosenModule(user_id, mongodb_module_id);
     } else {
-      return this.moduleRepository.pullChosenModule(user, module_id);
+      return this.moduleRepository.pullChosenModule(user_id, mongodb_module_id);
     }
   }
 
-  async hasUserChosenModule(
-    userId: string,
-    module_id: string
-  ): Promise<boolean> {
-    const user: User | null = await this.userRepository.findById(userId);
-    if (!user) return false;
-    return this.userRepository.hasChosenModule(user, module_id);
+  async getMongoIdByModuleId(module_id: string): Promise<string | null> {
+    return this.moduleRepository.findMongoIdByModuleId(module_id);
   }
 }
