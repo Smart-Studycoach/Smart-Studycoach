@@ -21,9 +21,13 @@ export async function GET(
 
     const { userId } = authResult;
 
-    const module_chosen = await userService.hasUserChosenModule(userId, id);
+    const isEnrolled = await userService.hasUserChosenModule(
+      userId,
+      Number(id)
+    );
+    const isFavorited = await userService.hasFavoriteModule(userId, Number(id));
 
-    return NextResponse.json({ module, module_chosen });
+    return NextResponse.json({ module, isEnrolled, isFavorited });
   } catch (error) {
     console.error("Failed to fetch module", error);
     return NextResponse.json(
@@ -32,48 +36,3 @@ export async function GET(
     );
   }
 }
-
-// export async function POST(
-//   request: NextRequest,
-//   { params }: { params: Promise<{ id: string }> }
-// ) {
-//   try {
-//     const authResult = requireAuth(request);
-//     if (authResult instanceof NextResponse) return authResult;
-
-//     const { userId } = authResult;
-//     const { id } = await params;
-
-//     const body = await request.json();
-//     if (typeof body.chosen !== "boolean") {
-//       return NextResponse.json(
-//         { error: "Invalid request body" },
-//         { status: 400 }
-//       );
-//     }
-
-//     const success = await moduleService.updateChosenModule(
-//       userId,
-//       Number(id), // fout afhandeling?
-//       body.chosen
-//     );
-//     if (!success) {
-//       return NextResponse.json(
-//         { error: "Failed to update module choice" },
-//         { status: 500 }
-//       );
-//     }
-
-//     return NextResponse.json({
-//       message: "Module choice updated successfully",
-//       moduleId: id,
-//       chosen: body.chosen,
-//     });
-//   } catch (error) {
-//     console.error("Failed to update module choice", error);
-//     return NextResponse.json(
-//       { error: "Failed to update module choice" },
-//       { status: 500 }
-//     );
-//   }
-// }

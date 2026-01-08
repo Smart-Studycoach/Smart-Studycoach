@@ -97,12 +97,11 @@ export class UserRepository implements IUserRepository {
     return count > 0;
   }
 
-  async hasChosenModule(user: User, module_id: string): Promise<boolean> {
+  async hasChosenModule(user: User, module_id: number): Promise<boolean> {
     await connectToDatabase();
-    const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.findOne({
       _id: user._id,
-      chosenModules: parsedId,
+      chosenModules: module_id,
     });
     return doc !== null;
   }

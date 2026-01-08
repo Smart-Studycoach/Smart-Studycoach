@@ -32,7 +32,7 @@ export class UserService {
 
   async hasUserChosenModule(
     userId: string,
-    module_id: string
+    module_id: number
   ): Promise<boolean> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) return false;
