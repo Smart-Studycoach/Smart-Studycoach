@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const success = await moduleService.updateChosenModule(
+    const success = await userService.toggleEnrolledModule(
       userId,
       body.module_id,
       true

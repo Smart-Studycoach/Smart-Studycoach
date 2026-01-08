@@ -44,4 +44,16 @@ export class UserService {
     const profile = await this.userRepository.findProfileById(userId);
     return profile;
   }
+
+  async toggleEnrolledModule(
+    user_id: string,
+    module_id: number,
+    chosen: boolean
+  ): Promise<boolean> {
+    if (chosen) {
+      return this.userRepository.addEnrolledModule(user_id, module_id);
+    } else {
+      return this.userRepository.addEnrolledModule(user_id, module_id);
+    }
+  }
 }

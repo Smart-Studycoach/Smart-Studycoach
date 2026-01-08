@@ -152,4 +152,30 @@ export class UserRepository implements IUserRepository {
     );
     return foundUser?.favoriteModules ?? [];
   }
+
+  async addEnrolledModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+    const doc = await UserModel.updateOne(
+      { _id: user_id },
+      { $addToSet: { chosenModules: module_id } }
+    );
+    if (!doc) return false;
+    return true;
+  }
+
+  async removeEnrolledModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+    const doc = await UserModel.updateOne(
+      { _id: user_id },
+      { $pull: { chosenModules: module_id } }
+    );
+    if (!doc) return false;
+    return true;
+  }
 }

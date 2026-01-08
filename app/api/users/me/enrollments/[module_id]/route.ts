@@ -15,7 +15,7 @@ export async function DELETE(
     const { userId } = authResult;
     const { module_id } = await params;
 
-    const success = await moduleService.updateChosenModule(
+    const success = await userService.toggleEnrolledModule(
       userId,
       module_id,
       false
@@ -30,8 +30,7 @@ export async function DELETE(
     revalidatePath("/modules");
 
     return NextResponse.json({
-      message: "Successfully unenrolled",
-      moduleId: module_id,
+      succes: true,
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to unenroll" }, { status: 500 });

@@ -71,7 +71,7 @@ export async function PUT(
     }
 
     return NextResponse.json({
-      succes: true,
+      success: true,
     });
   } catch (error) {
     return NextResponse.json(
