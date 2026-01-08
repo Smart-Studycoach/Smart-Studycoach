@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const data: UserProfileInfo = {
-      mongodb_module_id: profile.mongodb_module_id,
       name: profile.name,
       student_profile: profile.student_profile,
     };

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { moduleService } from "@/infrastructure/container";
 import { userService } from "@/infrastructure/container";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
@@ -25,6 +26,8 @@ export async function DELETE(
         { status: 500 }
       );
     }
+
+    revalidatePath("/modules");
 
     return NextResponse.json({
       message: "Successfully unenrolled",

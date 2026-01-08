@@ -37,7 +37,6 @@ export class UserRepository implements IUserRepository {
     );
     if (!doc) return null;
     return {
-      _id: (doc as IUserDocument)._id.toString(),
       name: (doc as IUserDocument).name,
       student_profile: (doc as IUserDocument).studentProfile,
       favorite_modules: (doc as IUserDocument).favoriteModules,
