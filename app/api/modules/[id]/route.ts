@@ -33,56 +33,47 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = requireAuth(request);
-    if (authResult instanceof NextResponse) return authResult;
+// export async function POST(
+//   request: NextRequest,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   try {
+//     const authResult = requireAuth(request);
+//     if (authResult instanceof NextResponse) return authResult;
 
-    const { userId } = authResult;
-    const { id } = await params;
+//     const { userId } = authResult;
+//     const { id } = await params;
 
-    const body = await request.json();
-    if (typeof body.chosen !== "boolean") {
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
-    }
+//     const body = await request.json();
+//     if (typeof body.chosen !== "boolean") {
+//       return NextResponse.json(
+//         { error: "Invalid request body" },
+//         { status: 400 }
+//       );
+//     }
 
-    const _id = await moduleService.getMongoIdByModuleId(id);
+//     const success = await moduleService.updateChosenModule(
+//       userId,
+//       Number(id), // fout afhandeling?
+//       body.chosen
+//     );
+//     if (!success) {
+//       return NextResponse.json(
+//         { error: "Failed to update module choice" },
+//         { status: 500 }
+//       );
+//     }
 
-    if (!_id) {
-      return NextResponse.json(
-        { error: "Failed to update module choice" },
-        { status: 404 }
-      );
-    }
-
-    const success = await moduleService.updateChosenModule(
-      userId,
-      _id,
-      body.chosen
-    );
-    if (!success) {
-      return NextResponse.json(
-        { error: "Failed to update module choice" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      message: "Module choice updated successfully",
-      moduleId: id,
-      chosen: body.chosen,
-    });
-  } catch (error) {
-    console.error("Failed to update module choice", error);
-    return NextResponse.json(
-      { error: "Failed to update module choice" },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({
+//       message: "Module choice updated successfully",
+//       moduleId: id,
+//       chosen: body.chosen,
+//     });
+//   } catch (error) {
+//     console.error("Failed to update module choice", error);
+//     return NextResponse.json(
+//       { error: "Failed to update module choice" },
+//       { status: 500 }
+//     );
+//   }
+// }

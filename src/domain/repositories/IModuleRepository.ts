@@ -15,8 +15,8 @@ export interface ModuleFilters {
 export interface IModuleRepository {
   findAll(filters?: ModuleFilters): Promise<Module[]>;
   findById(id: string): Promise<Module | null>;
-  findMongoIdByModuleId(module_id: string): Promise<string | null>;
-  addChosenModule(user_id: string, module_id: string): Promise<boolean>;
-  pullChosenModule(user_id: string, module_id: string): Promise<boolean>;
-  findMinimalsByIds(module_ids: string[]): Promise<ModuleMinimal[] | null>;
+  // findMongoIdByModuleId(module_id: string): Promise<string | null>;
+  addChosenModule(user_id: string, module_id: number): Promise<boolean>;
+  pullChosenModule(user_id: string, module_id: number): Promise<boolean>;
+  findMinimalsByIds(module_ids: number[]): Promise<ModuleMinimal[] | null>;
 }

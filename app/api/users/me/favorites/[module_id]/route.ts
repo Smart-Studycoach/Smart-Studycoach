@@ -4,7 +4,7 @@ import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ module_id: string }> }
 ) {
   try {
     const authResult = requireAuth(request);
@@ -16,12 +16,12 @@ export async function GET(
 
     const params = await context.params;
 
-    const { id } = params;
-    const moduleId = Number(id);
+    const { module_id } = params;
+    const moduleId = Number(module_id);
 
     if (Number.isNaN(moduleId)) {
       return NextResponse.json(
-        { error: "Invalid module id: " + id },
+        { error: "Invalid module id: " + module_id },
         { status: 400 }
       );
     }
@@ -38,9 +38,9 @@ export async function GET(
   }
 }
 
-export async function POST(
+export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ module_id: string }> }
 ) {
   try {
     const authResult = requireAuth(request);
@@ -50,25 +50,17 @@ export async function POST(
 
     const params = await context.params;
 
-    const { id } = params;
-    const moduleId = Number(id);
+    const { module_id } = params;
+    const moduleId = Number(module_id);
 
     if (Number.isNaN(moduleId)) {
       return NextResponse.json({ error: "Invalid module id" }, { status: 400 });
     }
 
-    const body = await request.json();
-    if (typeof body.favorite !== "boolean") {
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
-    }
-
     const success = await userService.toggleFavoriteModule(
       userId,
       moduleId,
-      body.favorite
+      true
     );
 
     if (!success) {
@@ -79,11 +71,52 @@ export async function POST(
     }
 
     return NextResponse.json({
-      moduleId,
-      favorite: body.favorite,
+      succes: true,
     });
   } catch (error) {
-    console.error("Failed to update favorite", error);
+    return NextResponse.json(
+      { error: "Failed to update favorite" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ module_id: string }> }
+) {
+  try {
+    const authResult = requireAuth(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    const { userId } = authResult;
+
+    const params = await context.params;
+
+    const { module_id } = params;
+    const moduleId = Number(module_id);
+
+    if (Number.isNaN(moduleId)) {
+      return NextResponse.json({ error: "Invalid module id" }, { status: 400 });
+    }
+
+    const success = await userService.toggleFavoriteModule(
+      userId,
+      moduleId,
+      false
+    );
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Failed to update favorite" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      succes: true,
+    });
+  } catch (error) {
     return NextResponse.json(
       { error: "Failed to update favorite" },
       { status: 500 }

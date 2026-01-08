@@ -76,21 +76,32 @@ export default function ModuleDetailPage() {
     setIsRegistered(newChosen);
 
     try {
-      const response = await fetch(`/api/modules/${params.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chosen: newChosen }),
-      });
-      const data = await response.json();
+      let data: any = null;
+      let resonseOK = false;
+      if (newChosen) {
+        const response = await fetch("/api/users/me/enrollments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ module_id: Number(params.id) }),
+        });
+        data = await response.json();
+        resonseOK = !!response.ok;
+      } else {
+        const response = await fetch(`/api/users/me/enrollments/${params.id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+        data = await response.json();
+        resonseOK = !!response.ok;
+      }
 
-      if (!response.ok) {
+      if (!resonseOK) {
         setIsRegistered(!newChosen); // revert
         setActionError(data.error || "Failed to update module choice");
       }
     } catch (err) {
       setIsRegistered(!newChosen); // revert
       setActionError("Failed to update module choice");
-      console.error(err);
     } finally {
       setRegisteringLoading(false);
     }
@@ -105,8 +116,15 @@ export default function ModuleDetailPage() {
     setFavorited(newFav);
 
     try {
-      const response = await fetch(`/api/favorites/${params.id}`, {
-        method: "POST",
+      let method = "";
+      if (newFav) {
+        method = "POST";
+      } else {
+        method = "DELETE";
+      }
+
+      const response = await fetch(`/api/users/me/favorites/${params.id}`, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ favorite: newFav }),
       });
