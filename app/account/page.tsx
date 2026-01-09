@@ -100,6 +100,13 @@ export default function Account() {
   };
 
   const handleSave = async () => {
+    // Client-side email validation before sending to API
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(editedEmail)) {
+      setError("Invalid email format");
+      return;
+    }
+
     setIsSaving(true);
     try {
       const updatedUser = await authService.updateUser({
@@ -132,6 +139,30 @@ export default function Account() {
 
     if (newPassword.length < 12) {
       setPasswordError("Password must be at least 12 characters long");
+      return;
+    }
+
+    // 12 characters
+    if (newPassword.length < 12) {
+      setPasswordError("Password must be at least 12 characters long");
+      return;
+    }
+    
+    // Capital letter
+    if (!/[A-Z]/.test(newPassword)) {
+      setPasswordError("Password must contain at least one uppercase letter");
+      return;
+    }
+    
+    // Number
+    if (!/[0-9]/.test(newPassword)) {
+      setPasswordError("Password must contain at least one number");
+      return;
+    }
+    
+    // Special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      setPasswordError("Password must contain at least one special character");
       return;
     }
 
@@ -212,15 +243,15 @@ export default function Account() {
                     />
                   )}
                 </div>
-                  <div className="space-y-2">
+                <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   {isEditing ? (
                     <Input
-                    id="email"
-                    type="email"
-                    value={editedEmail}
-                    onChange={(e) => setEditedEmail(e.target.value)}
-                    disabled={isSaving}
+                      id="email"
+                      type="email"
+                      value={editedEmail}
+                      onChange={(e) => setEditedEmail(e.target.value)}
+                      disabled={isSaving}
                     />
                   ) : (
                     <Input
@@ -230,7 +261,7 @@ export default function Account() {
                       disabled={true}
                     />
                   )}
-                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -288,7 +319,7 @@ export default function Account() {
                       disabled={isChangingPassword}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Must be at least 12 characters with uppercase, number, and special character
+                      Must be at least 12 characters with at least one uppercase letter, one number, and one special character
                     </p>
                   </div>
                   <div className="space-y-2">
