@@ -48,7 +48,7 @@ export default function ModuleDetailPage() {
         setIsFavorited(data.isFavorited);
         // fetch favorite state for this module (if user is authenticated)
         try {
-          const favRes = await fetch(`/api/favorites/${params.id}`);
+          const favRes = await fetch(`/api/users/me/favorites/${params.id}`);
           const favData = await favRes.json();
           if (favRes.ok) {
             setIsFavorited(Boolean(favData.favorite));
