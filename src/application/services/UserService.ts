@@ -8,35 +8,27 @@ export class UserService {
     module_id: number,
     favorite: boolean
   ): Promise<boolean> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return false;
-
     return favorite
-      ? this.userRepository.addFavoriteModule(user, module_id)
-      : this.userRepository.removeFavoriteModule(user, module_id);
+      ? this.userRepository.addFavoriteModule(userId, module_id)
+      : this.userRepository.removeFavoriteModule(userId, module_id);
   }
 
-  async hasFavoriteModule(userId: string, module_id: number): Promise<boolean> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return false;
-
-    return this.userRepository.hasFavoriteModule(user, module_id);
-  }
-
-  async getFavoriteModules(userId: string): Promise<number[]> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return [];
-
-    return this.userRepository.getFavoriteModules(user);
-  }
-
-  async hasUserChosenModule(
+  async hasFavoritedModule(
     userId: string,
     module_id: number
   ): Promise<boolean> {
-    const user: User | null = await this.userRepository.findById(userId);
-    if (!user) return false;
-    return this.userRepository.hasChosenModule(user, module_id);
+    return this.userRepository.hasFavoritedModule(userId, module_id);
+  }
+
+  async getFavoriteModules(userId: string): Promise<number[]> {
+    return this.userRepository.getFavoriteModules(userId);
+  }
+
+  async hasEnrolledInModule(
+    userId: string,
+    module_id: number
+  ): Promise<boolean> {
+    return this.userRepository.hasEnrolledInModule(userId, module_id);
   }
 
   async getUserProfile(userId: string): Promise<UserProfileDTO | null> {
@@ -50,10 +42,8 @@ export class UserService {
     module_id: number,
     chosen: boolean
   ): Promise<boolean> {
-    if (chosen) {
-      return this.userRepository.addEnrolledModule(user_id, module_id);
-    } else {
-      return this.userRepository.addEnrolledModule(user_id, module_id);
-    }
+    return chosen
+      ? this.userRepository.addEnrolledModule(user_id, module_id)
+      : this.userRepository.addEnrolledModule(user_id, module_id);
   }
 }

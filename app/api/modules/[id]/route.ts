@@ -21,11 +21,14 @@ export async function GET(
 
     const { userId } = authResult;
 
-    const isEnrolled = await userService.hasUserChosenModule(
+    const isEnrolled = await userService.hasEnrolledInModule(
       userId,
       Number(id)
     );
-    const isFavorited = await userService.hasFavoriteModule(userId, Number(id));
+    const isFavorited = await userService.hasFavoritedModule(
+      userId,
+      Number(id)
+    );
 
     return NextResponse.json({ module, isEnrolled, isFavorited });
   } catch (error) {

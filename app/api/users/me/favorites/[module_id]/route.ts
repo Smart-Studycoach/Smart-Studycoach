@@ -26,7 +26,7 @@ export async function GET(
       );
     }
 
-    const favorite = await userService.hasFavoriteModule(userId, moduleId);
+    const favorite = await userService.hasFavoritedModule(userId, moduleId);
 
     return NextResponse.json({ favorite });
   } catch (error) {
