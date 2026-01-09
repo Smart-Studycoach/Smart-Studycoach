@@ -44,6 +44,6 @@ export class UserService {
   ): Promise<boolean> {
     return chosen
       ? this.userRepository.addEnrolledModule(user_id, module_id)
-      : this.userRepository.addEnrolledModule(user_id, module_id);
+      : this.userRepository.removeEnrolledModule(user_id, module_id);
   }
 }

@@ -6,7 +6,7 @@ import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ module_id: number }> }
+  { params }: { params: Promise<{ module_id: string }> }
 ) {
   try {
     const authResult = requireAuth(request);
@@ -14,10 +14,18 @@ export async function DELETE(
 
     const { userId } = authResult;
     const { module_id } = await params;
+    const moduleId = Number(module_id);
+
+    if (Number.isNaN(moduleId)) {
+      return NextResponse.json(
+        { error: "Invalid module id: " + module_id },
+        { status: 400 }
+      );
+    }
 
     const success = await userService.toggleEnrolledModule(
       userId,
-      module_id,
+      moduleId,
       false
     );
     if (!success) {
