@@ -1,4 +1,7 @@
+import { Types } from "mongoose";
+
 import { User, CreateUserDTO, IUserRepository, UserProfileDTO } from "@/domain";
+
 import { connectToDatabase } from "../database/mongodb";
 import { UserModel, IUserDocument } from "../database/models/UserModel";
 
@@ -34,7 +37,6 @@ export class UserRepository implements IUserRepository {
     );
     if (!doc) return null;
     return {
-      _id: (doc as IUserDocument)._id.toString(),
       name: (doc as IUserDocument).name,
       student_profile: (doc as IUserDocument).studentProfile,
       favorite_modules: (doc as IUserDocument).favoriteModules,
@@ -94,13 +96,98 @@ export class UserRepository implements IUserRepository {
     return count > 0;
   }
 
-  async hasChosenModule(user: User, module_id: string): Promise<boolean> {
+  async hasEnrolledInModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
     await connectToDatabase();
-    const parsedId = Number.parseInt(module_id, 10);
     const doc = await UserModel.findOne({
-      _id: user._id,
-      chosenModules: parsedId,
+      _id: user_id,
+      chosenModules: module_id,
     });
     return doc !== null;
+  }
+
+  async addFavoriteModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    console.log("ADD FAVORITE", {
+      userId: user_id,
+      module_id,
+    });
+
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: new Types.ObjectId(user_id) },
+      { $addToSet: { favoriteModules: module_id } }
+    );
+    console.log("UPDATE RESULT", result);
+
+    return result.modifiedCount > 0;
+  }
+
+  async removeFavoriteModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+
+    const result = await UserModel.updateOne(
+      { _id: user_id },
+      { $pull: { favoriteModules: module_id } }
+    );
+
+    return result.modifiedCount > 0;
+  }
+
+  async hasFavoritedModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+
+    const exists = await UserModel.exists({
+      _id: user_id,
+      favoriteModules: module_id,
+    });
+
+    return Boolean(exists);
+  }
+
+  async getFavoriteModules(user_id: string): Promise<number[]> {
+    await connectToDatabase();
+
+    const foundUser = await UserModel.findById(user_id).select(
+      "favoriteModules"
+    );
+    return foundUser?.favoriteModules ?? [];
+  }
+
+  async addEnrolledModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+    const doc = await UserModel.updateOne(
+      { _id: user_id },
+      { $addToSet: { chosenModules: module_id } }
+    );
+    if (!doc) return false;
+    return true;
+  }
+
+  async removeEnrolledModule(
+    user_id: string,
+    module_id: number
+  ): Promise<boolean> {
+    await connectToDatabase();
+    const doc = await UserModel.updateOne(
+      { _id: user_id },
+      { $pull: { chosenModules: module_id } }
+    );
+    if (!doc) return false;
+    return true;
   }
 }
