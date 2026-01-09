@@ -6,6 +6,18 @@ import { IRecommendationRepository } from "@/domain/repositories/IRecommendation
 import { RecommendationMapper } from "../mappers/RecommendationMapper";
 import { RecommendationDto } from "@/application/dto/RecommendationDto";
 
+class HttpError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public url: string,
+    public body?: string
+  ) {
+    super(message);
+    this.name = "HttpError";
+  }
+}
+
 export class RecommendationRepository implements IRecommendationRepository {
   private readonly baseUrl = "http://localhost:8000";
   private readonly apiKey = "dev-api-key-12345"; // In production, this MUST be an environment variable
@@ -53,10 +65,8 @@ export class RecommendationRepository implements IRecommendationRepository {
     preferred_location: string,
     k: number = 3
   ): Promise<Recommendation[]> {
-    // Check API health first
-    const isHealthy = await this.checkHealth();
-    if (!isHealthy) {
-      throw new Error("Recommendation API is unavailable. Try again later.");
+    if (!(await this.checkHealth())) {
+      throw new Error("Recommendation API is unavailable.");
     }
 
     try {
@@ -75,28 +85,41 @@ export class RecommendationRepository implements IRecommendationRepository {
       });
 
       if (!response.ok) {
-        let bodyText: string;
+        let body: string | undefined;
         try {
-          bodyText = await response.text();
-        } catch (e) {
-          bodyText = "<unable to read response body>";
+          body = await response.text();
+        } catch {
+          body = undefined;
         }
 
-        const headersList = Array.from(response.headers.entries())
-          .map(([k, v]) => `${k}: ${v}`)
-          .join("; ");
-
-        throw new Error(
-          `HTTP error ${response.status} ${response.statusText} when calling ${response.url}. Headers: ${headersList}. Body: ${bodyText}`
+        throw new HttpError(
+          `Recommendation API returned ${response.status}`,
+          response.status,
+          response.url,
+          body
         );
       }
 
       const data = (await response.json()) as RecommendationDto[];
       return RecommendationMapper.toDomainList(data);
-    } catch (err) {
-      throw new Error(
-        `RecommendationRepository.RecommendCourses failed: ${err}`
-      );
+    } catch (err: unknown) {
+      if (err instanceof HttpError) {
+        throw err;
+      }
+
+      if (err instanceof SyntaxError) {
+        throw new Error("Failed to parse recommendation API response", {
+          cause: err,
+        });
+      }
+
+      if (err instanceof Error) {
+        throw new Error("RecommendationRepository.recommendCourses failed", {
+          cause: err,
+        });
+      }
+
+      throw new Error("Unknown error in recommendCourses", { cause: err });
     }
   }
 }
