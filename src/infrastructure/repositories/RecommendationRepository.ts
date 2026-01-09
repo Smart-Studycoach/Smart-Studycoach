@@ -8,7 +8,7 @@ import { RecommendationDto } from "@/application/dto/RecommendationDto";
 
 export class RecommendationRepository implements IRecommendationRepository {
   private readonly baseUrl = "http://localhost:8000";
-  private readonly apiKey = "dev-api-key-12345";
+  private readonly apiKey = "dev-api-key-12345"; // In production, this MUST be an environment variable
   private healthCheckCache: { isHealthy: boolean; timestamp: number } | null =
     null;
   private readonly healthCheckCacheDuration = 30000; // 30 seconds
