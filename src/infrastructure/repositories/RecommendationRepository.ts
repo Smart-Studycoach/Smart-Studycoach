@@ -56,9 +56,7 @@ export class RecommendationRepository implements IRecommendationRepository {
     // Check API health first
     const isHealthy = await this.checkHealth();
     if (!isHealthy) {
-      throw new Error(
-        "Recommendation API is niet beschikbaar. Probeer het later opnieuw."
-      );
+      throw new Error("Recommendation API is unavailable. Try again later.");
     }
 
     try {
