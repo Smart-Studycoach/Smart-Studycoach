@@ -15,7 +15,7 @@ export async function submitRecommendation(
 
   // Backend validation
   if (interests.length < 10) {
-    throw new Error("Interesses moet minimaal 10 karakters bevatten");
+    throw new Error("Interests must contain at least 10 characters");
   }
 
   const recommendations = await recommendationService.RecommendCourses(
