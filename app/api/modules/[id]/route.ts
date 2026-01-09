@@ -17,7 +17,7 @@ export async function GET(
 
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse)
-      return NextResponse.json({ module, module_chosen: false });
+      return NextResponse.json({ module }); // should be handeled in the frontend whether the user is authenticated
 
     const { userId } = authResult;
 
