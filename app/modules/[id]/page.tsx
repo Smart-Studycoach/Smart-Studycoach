@@ -32,77 +32,122 @@ export default function ModuleDetailPage() {
 
   useEffect(() => {
     const fetchModule = async () => {
+      if (!params.id) {
+        setError("Geen module ID opgegeven");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(`/api/modules/${params.id}`);
-        const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || "Failed to load module");
+          if (response.status === 404) {
+            setError("Module niet gevonden");
+          } else if (response.status >= 500) {
+            setError(
+              "Er ging iets mis bij het laden van de module. Probeer het later opnieuw."
+            );
+          } else {
+            const data = await response.json();
+            setError(data.error || "Kon de module niet laden");
+          }
+          setLoading(false);
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!data.module) {
+          setError("Module data ontbreekt");
           setLoading(false);
           return;
         }
 
         setModule(data.module);
-        setLoading(false);
-        setIsEnrolled(data.isEnrolled);
-        setIsFavorited(data.isFavorited);
-        // fetch favorite state for this module (if user is authenticated)
+        setIsEnrolled(data.isEnrolled || false);
+        setIsFavorited(data.isFavorited || false);
+
+        // Fetch favorite state separately if user is authenticated
         try {
           const favRes = await fetch(`/api/users/me/favorites/${params.id}`);
-          const favData = await favRes.json();
           if (favRes.ok) {
+            const favData = await favRes.json();
             setIsFavorited(Boolean(favData.favorite));
           }
         } catch (err) {
-          console.error("Failed to load favorite state", err);
+          // Silent fail for favorite state - not critical
+          console.error("Kon favoriet status niet laden", err);
         }
-      } catch (err) {
-        setError("Failed to load module");
+
         setLoading(false);
-        console.error(err);
+      } catch (err) {
+        console.error("Fout bij het laden van module:", err);
+        setError(
+          "Kan geen verbinding maken met de server. Controleer je internetverbinding."
+        );
+        setLoading(false);
       }
     };
 
-    if (params.id) {
-      fetchModule();
-    }
+    fetchModule();
   }, [params.id]);
 
   const handleEnrolling = async () => {
     if (!module) return;
+
     setActionError("");
     setEnrollingLoading(true);
 
-    const newChosen = !isEnrolled;
-    setIsEnrolled(newChosen);
+    const newEnrolled = !isEnrolled;
+    const previousEnrolled = isEnrolled;
+    setIsEnrolled(newEnrolled);
 
     try {
-      let data: any = null;
-      let resonseOK = false;
-      if (newChosen) {
-        const response = await fetch("/api/users/me/enrollments", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ module_id: Number(params.id) }),
-        });
-        data = await response.json();
-        resonseOK = !!response.ok;
-      } else {
-        const response = await fetch(`/api/users/me/enrollments/${params.id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        });
-        data = await response.json();
-        resonseOK = !!response.ok;
+      const endpoint = newEnrolled
+        ? "/api/users/me/enrollments"
+        : `/api/users/me/enrollments/${params.id}`;
+
+      const response = await fetch(endpoint, {
+        method: newEnrolled ? "POST" : "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: newEnrolled
+          ? JSON.stringify({ module_id: Number(params.id) })
+          : undefined,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setIsEnrolled(previousEnrolled);
+
+        if (response.status === 401) {
+          setActionError(
+            "Je moet ingelogd zijn om je aan te melden voor een module"
+          );
+        } else if (response.status === 404) {
+          setActionError("Module niet gevonden");
+        } else if (response.status >= 500) {
+          setActionError(
+            newEnrolled
+              ? "Er ging iets mis bij het aanmelden. Probeer het later opnieuw."
+              : "Er ging iets mis bij het afmelden. Probeer het later opnieuw."
+          );
+        } else {
+          setActionError(
+            data.error ||
+              (newEnrolled ? "Aanmelden mislukt" : "Afmelden mislukt")
+          );
+        }
+        return;
       }
 
-      if (!resonseOK) {
-        setIsEnrolled(!newChosen); // revert
-        setActionError(data.error || "Failed to update module choice");
-      }
+      // Success - no error message needed
     } catch (err) {
-      setIsEnrolled(!newChosen); // revert
-      setActionError("Failed to update module choice");
+      console.error("Fout bij inschrijving:", err);
+      setIsEnrolled(previousEnrolled);
+      setActionError(
+        "Kan geen verbinding maken met de server. Controleer je internetverbinding."
+      );
     } finally {
       setEnrollingLoading(false);
     }
@@ -110,35 +155,52 @@ export default function ModuleDetailPage() {
 
   const handleFavoriting = async () => {
     if (!module) return;
+
     setActionError("");
     setFavoriteLoading(true);
 
-    const newFav = !isFavorited;
-    setIsFavorited(newFav);
+    const newFavorited = !isFavorited;
+    const previousFavorited = isFavorited;
+    setIsFavorited(newFavorited);
 
     try {
-      let method = "";
-      if (newFav) {
-        method = "PUT";
-      } else {
-        method = "DELETE";
-      }
-
       const response = await fetch(`/api/users/me/favorites/${params.id}`, {
-        method: method,
+        method: newFavorited ? "PUT" : "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ favorite: newFav }),
       });
 
-      const data = await response.json();
       if (!response.ok) {
-        setIsFavorited(!newFav); // revert
-        setActionError(data.error || "Failed to update favorite");
+        const data = await response.json();
+        setIsFavorited(previousFavorited);
+
+        if (response.status === 401) {
+          setActionError("Je moet ingelogd zijn om favorieten toe te voegen");
+        } else if (response.status === 404) {
+          setActionError("Module niet gevonden");
+        } else if (response.status >= 500) {
+          setActionError(
+            newFavorited
+              ? "Er ging iets mis bij het toevoegen aan favorieten. Probeer het later opnieuw."
+              : "Er ging iets mis bij het verwijderen van favorieten. Probeer het later opnieuw."
+          );
+        } else {
+          setActionError(
+            data.error ||
+              (newFavorited
+                ? "Toevoegen aan favorieten mislukt"
+                : "Verwijderen van favorieten mislukt")
+          );
+        }
+        return;
       }
+
+      // Success - no error message needed
     } catch (err) {
-      setIsFavorited(!newFav); // revert
-      setActionError("Failed to update favorite");
-      console.error(err);
+      console.error("Fout bij favorieten:", err);
+      setIsFavorited(previousFavorited);
+      setActionError(
+        "Kan geen verbinding maken met de server. Controleer je internetverbinding."
+      );
     } finally {
       setFavoriteLoading(false);
     }
@@ -147,7 +209,7 @@ export default function ModuleDetailPage() {
   if (loading) {
     return (
       <div className="module-detail-container">
-        <div className="loading">Loading...</div>
+        <div className="loading">Module laden...</div>
       </div>
     );
   }
@@ -155,7 +217,17 @@ export default function ModuleDetailPage() {
   if (error || !module) {
     return (
       <div className="module-detail-container">
-        <div className="error">{error || "Module not found"}</div>
+        <div className="error">
+          <h2>Oeps!</h2>
+          <p>{error || "Module niet gevonden"}</p>
+          <button
+            className="btn-primary"
+            onClick={() => (window.location.href = "/modules")}
+            style={{ marginTop: "1rem" }}
+          >
+            Terug naar modules
+          </button>
+        </div>
       </div>
     );
   }
@@ -203,7 +275,11 @@ export default function ModuleDetailPage() {
                 />
               </svg>
             )}
-            {enrollingLoading ? "..." : isEnrolled ? "Afmelden" : "Aanmelden"}
+            {enrollingLoading
+              ? "Bezig..."
+              : isEnrolled
+              ? "Afmelden"
+              : "Aanmelden"}
           </button>
           <button
             className="btn-secondary"
@@ -215,11 +291,11 @@ export default function ModuleDetailPage() {
                 d="M8 2.5l1.5 4.5h4.5l-3.5 2.5 1.5 4.5-3.5-2.5-3.5 2.5 1.5-4.5-3.5-2.5h4.5z"
                 stroke="currentColor"
                 strokeWidth="1.5"
-                fill="none"
+                fill={isFavorited ? "currentColor" : "none"}
               />
             </svg>
             {favoriteLoading
-              ? "..."
+              ? "Bezig..."
               : isFavorited
               ? "Verwijder favoriet"
               : "Maak favoriet"}
@@ -235,7 +311,7 @@ export default function ModuleDetailPage() {
             alt={module.name}
             onError={(e) => {
               e.currentTarget.src =
-                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23323333" width="400" height="300"/%3E%3Ctext fill="%23fff" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20"%3EModule Image%3C/text%3E%3C/svg%3E';
+                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23323333" width="400" height="300"/%3E%3Ctext fill="%23fff" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20"%3EModule Afbeelding%3C/text%3E%3C/svg%3E';
             }}
           />
         </div>

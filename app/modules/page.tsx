@@ -73,11 +73,11 @@ export default async function Index({
 }) {
   const params = await searchParams;
 
-  // Fetch filtered modules from backend
-  const modules = await getModules(params);
-
-  // Fetch all modules to populate filter dropdowns
-  const allModules = await getAllModulesForFilters();
+  // Parallel fetch
+  const [modules, allModules] = await Promise.all([
+    getModules(params),
+    getAllModulesForFilters(),
+  ]);
 
   const currentPage = Number(params?.page) || 1;
   const totalPages = Math.ceil(modules.length / ITEMS_PER_PAGE);
@@ -93,7 +93,7 @@ export default async function Index({
     new Set(allModules.flatMap((m) => m.location || []))
   ).filter(Boolean);
 
-  // Calculate pagination on already filtered results
+  // Pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedModules = modules.slice(startIndex, endIndex);
