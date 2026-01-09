@@ -16,7 +16,6 @@ export interface Module {
 }
 
 export interface ModuleMinimal {
-  mongodb_module_id: string;
   module_id: number;
   name: string;
 }
