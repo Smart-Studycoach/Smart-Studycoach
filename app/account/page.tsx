@@ -11,8 +11,6 @@ import { Label } from "@/components/ui/label";
 import { authService } from "@/lib/services/auth";
 import { useRouter } from "next/navigation";
 
-import "./styles.css";
-
 export default function Account() {
   const [userProfile, setUserProfile] = useState<UserProfileInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +20,13 @@ export default function Account() {
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -116,6 +121,51 @@ export default function Account() {
     }
   };
 
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 12) {
+      setPasswordError("Password must be at least 12 characters long");
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      await authService.updatePassword(oldPassword, newPassword);
+      setPasswordSuccess("Password updated successfully");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsEditingPassword(false);
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
+      console.error(err);
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleEditPassword = () => {
+    setIsEditingPassword(true);
+    setPasswordError("");
+    setPasswordSuccess("");
+  };
+
+  const handleCancelPassword = () => {
+    setIsEditingPassword(false);
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordError("");
+    setPasswordSuccess("");
+  };
+
   return (
     <div>
       {loading && <p>Loading...</p>}
@@ -123,60 +173,147 @@ export default function Account() {
 
       {userProfile && (
         <div className="account-page">
-          <Card className="mb-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <Card className="py-8">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl">Profile Information</CardTitle>
+                  {!isEditing ? (
+                    <Button variant="outline" size="sm" onClick={handleEdit}>
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                        {isSaving ? "Saving..." : "Save"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  {isEditing ? (
+                    <Input
+                      id="name"
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      disabled={isSaving}
+                    />
+                  ) : (
+                    <Input
+                      id="name"
+                      value={userProfile.name}
+                      disabled={true}
+                    />
+                  )}
+                </div>
+                  <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  {isEditing ? (
+                    <Input
+                    id="email"
+                    type="email"
+                    value={editedEmail}
+                    onChange={(e) => setEditedEmail(e.target.value)}
+                    disabled={isSaving}
+                    />
+                  ) : (
+                    <Input
+                      id="email"
+                      type="email"
+                      value={authService.getUser()?.email || ""}
+                      disabled={true}
+                    />
+                  )}
+                  </div>
+              </CardContent>
+            </Card>
+
+            <Card className="py-8">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl">Profile Information</CardTitle>
-                {!isEditing ? (
-                  <Button variant="outline" size="sm" onClick={handleEdit}>
-                    Edit Profile
+                <CardTitle className="text-2xl">Change Password</CardTitle>
+                {!isEditingPassword ? (
+                  <Button variant="outline" size="sm" onClick={handleEditPassword}>
+                    Edit Password
                   </Button>
                 ) : (
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
+                    <Button variant="outline" size="sm" onClick={handleCancelPassword} disabled={isChangingPassword}>
                       Cancel
                     </Button>
-                    <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                      {isSaving ? "Saving..." : "Save"}
+                    <Button size="sm" onClick={handleChangePassword} disabled={isChangingPassword || !oldPassword || !newPassword || !confirmPassword}>
+                      {isChangingPassword ? "Saving..." : "Save"}
                     </Button>
                   </div>
                 )}
               </div>
+              {!isEditingPassword && (
+                <CardDescription>
+                  Update your password to keep your account secure
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                {isEditing ? (
-                  <Input
-                    id="name"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    disabled={isSaving}
-                  />
-                ) : (
-                  <p className="text-lg font-medium">{userProfile.name}</p>
-                )}
-              </div>
-                <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                {isEditing ? (
-                  <Input
-                  id="email"
-                  type="email"
-                  value={editedEmail}
-                  onChange={(e) => setEditedEmail(e.target.value)}
-                  disabled={isSaving}
-                  />
-                ) : (
-                  <p className="text-muted-foreground">{authService.getUser()?.email}</p>
-                )}
-                </div>
+              {passwordError && (
+                <p className="text-sm text-destructive">{passwordError}</p>
+              )}
+              {passwordSuccess && (
+                <p className="text-sm text-green-600">{passwordSuccess}</p>
+              )}
+              {isEditingPassword ? (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="oldPassword">Current Password</Label>
+                    <Input
+                      id="oldPassword"
+                      type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Must be at least 12 characters with uppercase, number, and special character
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                    />
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted-foreground">
+                  ••••••••••••
+                </p>
+              )}
             </CardContent>
           </Card>
+          </div>
 
-          <Card className="border-destructive/50 py-8">
+          <Card className="border-destructive/50 py-8 mb-6">
             <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardTitle className="text-destructive text-2xl">Danger Zone</CardTitle>
               <CardDescription>
                 Irreversible actions that will affect your account
               </CardDescription>

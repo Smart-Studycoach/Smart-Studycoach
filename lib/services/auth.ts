@@ -149,7 +149,7 @@ class AuthService {
   /**
    * Update user password
    */
-  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+  async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
     const token = this.getToken();
     
     if (!token) {
@@ -157,12 +157,12 @@ class AuthService {
     }
 
     const response = await fetch(`${API_BASE_URL}/auth/password`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ currentPassword, newPassword }),
+      body: JSON.stringify({ oldPassword, newPassword }),
     });
 
     if (!response.ok) {
