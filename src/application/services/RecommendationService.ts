@@ -5,7 +5,9 @@ import { Recommendation } from "@/domain/entities/Recommendation";
 import { IRecommendationRepository } from "@/domain/repositories/IRecommendationRepository";
 
 export class RecommendationService {
-  constructor(private readonly recommendationRepository: IRecommendationRepository) {}
+  constructor(
+    private readonly recommendationRepository: IRecommendationRepository
+  ) {}
 
   async RecommendCourses(
     interests_text: string,
@@ -13,7 +15,7 @@ export class RecommendationService {
     preferred_location: string,
     k: number = 3
   ): Promise<Recommendation[]> {
-    return this.recommendationRepository.RecommendCourses(
+    return this.recommendationRepository.recommendCourses(
       interests_text,
       preferred_level,
       preferred_location,

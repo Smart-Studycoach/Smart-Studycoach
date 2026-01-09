@@ -9,7 +9,8 @@ import { RecommendationDto } from "@/application/dto/RecommendationDto";
 export class RecommendationRepository implements IRecommendationRepository {
   private readonly baseUrl = "http://localhost:8000";
   private readonly apiKey = "dev-api-key-12345";
-  private healthCheckCache: { isHealthy: boolean; timestamp: number } | null = null;
+  private healthCheckCache: { isHealthy: boolean; timestamp: number } | null =
+    null;
   private readonly healthCheckCacheDuration = 30000; // 30 seconds
 
   private async checkHealth(): Promise<boolean> {
@@ -46,7 +47,7 @@ export class RecommendationRepository implements IRecommendationRepository {
     }
   }
 
-  async RecommendCourses(
+  async recommendCourses(
     interests_text: string,
     preferred_level: string,
     preferred_location: string,
