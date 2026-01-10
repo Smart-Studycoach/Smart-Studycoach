@@ -48,4 +48,8 @@ export class ModuleService {
   async getMongoIdByModuleId(module_id: string): Promise<string | null> {
     return this.moduleRepository.findMongoIdByModuleId(module_id);
   }
+
+  async getModulesByIds(ids: number[]) {
+    return this.moduleRepository.findByModuleIds(ids);
+  }
 }

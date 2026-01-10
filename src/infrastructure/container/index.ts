@@ -29,4 +29,4 @@ export const authApplicationService = new AuthApplicationService(
   authService
 );
 
-export const userService = new UserService(userRepository);
+export const userService = new UserService(userRepository, moduleRepository);

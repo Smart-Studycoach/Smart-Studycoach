@@ -121,7 +121,7 @@ export default async function Index({
           {paginatedModules.length > 0 ? (
             paginatedModules.map((module) => (
               <ModuleCard
-                key={module._id}
+                //key={module._id}
                 id={module.module_id}
                 title={module.name}
                 description={module.description}

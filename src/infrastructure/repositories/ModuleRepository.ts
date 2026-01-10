@@ -125,4 +125,9 @@ export class ModuleRepository implements IModuleRepository {
     if (!doc) return false;
     return true;
   }
+
+  async findByModuleIds(ids: number[]) {
+    await connectToDatabase();
+    return ModuleModel.find({ module_id: { $in: ids } });
+  }
 }

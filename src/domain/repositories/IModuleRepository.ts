@@ -19,4 +19,5 @@ export interface IModuleRepository {
   addChosenModule(user_id: string, module_id: string): Promise<boolean>;
   pullChosenModule(user_id: string, module_id: string): Promise<boolean>;
   findMinimalsByIds(module_ids: string[]): Promise<ModuleMinimal[] | null>;
+  findByModuleIds(ids: number[]): Promise<Module[]>;
 }
