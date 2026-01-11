@@ -24,9 +24,9 @@ export default function ModuleDetailPage() {
   const [module, setModule] = useState<Module | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [registeringLoading, setRegisteringLoading] = useState(false);
-  const [favorited, setFavorited] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrollingLoading, setEnrollingLoading] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [actionError, setActionError] = useState("");
 
@@ -44,13 +44,14 @@ export default function ModuleDetailPage() {
 
         setModule(data.module);
         setLoading(false);
-        setIsRegistered(data.module_chosen);
+        setIsEnrolled(data.isEnrolled);
+        setIsFavorited(data.isFavorited);
         // fetch favorite state for this module (if user is authenticated)
         try {
-          const favRes = await fetch(`/api/favorites/${params.id}`);
+          const favRes = await fetch(`/api/users/me/favorites/${params.id}`);
           const favData = await favRes.json();
           if (favRes.ok) {
-            setFavorited(Boolean(favData.favorite));
+            setIsFavorited(Boolean(favData.favorite));
           }
         } catch (err) {
           console.error("Failed to load favorite state", err);
@@ -67,32 +68,43 @@ export default function ModuleDetailPage() {
     }
   }, [params.id]);
 
-  const handleRegistering = async () => {
+  const handleEnrolling = async () => {
     if (!module) return;
     setActionError("");
-    setRegisteringLoading(true);
+    setEnrollingLoading(true);
 
-    const newChosen = !isRegistered;
-    setIsRegistered(newChosen);
+    const newChosen = !isEnrolled;
+    setIsEnrolled(newChosen);
 
     try {
-      const response = await fetch(`/api/modules/${params.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chosen: newChosen }),
-      });
-      const data = await response.json();
+      let data: any = null;
+      let resonseOK = false;
+      if (newChosen) {
+        const response = await fetch("/api/users/me/enrollments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ module_id: Number(params.id) }),
+        });
+        data = await response.json();
+        resonseOK = !!response.ok;
+      } else {
+        const response = await fetch(`/api/users/me/enrollments/${params.id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+        data = await response.json();
+        resonseOK = !!response.ok;
+      }
 
-      if (!response.ok) {
-        setIsRegistered(!newChosen); // revert
+      if (!resonseOK) {
+        setIsEnrolled(!newChosen); // revert
         setActionError(data.error || "Failed to update module choice");
       }
     } catch (err) {
-      setIsRegistered(!newChosen); // revert
+      setIsEnrolled(!newChosen); // revert
       setActionError("Failed to update module choice");
-      console.error(err);
     } finally {
-      setRegisteringLoading(false);
+      setEnrollingLoading(false);
     }
   };
 
@@ -101,23 +113,30 @@ export default function ModuleDetailPage() {
     setActionError("");
     setFavoriteLoading(true);
 
-    const newFav = !favorited;
-    setFavorited(newFav);
+    const newFav = !isFavorited;
+    setIsFavorited(newFav);
 
     try {
-      const response = await fetch(`/api/favorites/${params.id}`, {
-        method: "POST",
+      let method = "";
+      if (newFav) {
+        method = "PUT";
+      } else {
+        method = "DELETE";
+      }
+
+      const response = await fetch(`/api/users/me/favorites/${params.id}`, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ favorite: newFav }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        setFavorited(!newFav); // revert
+        setIsFavorited(!newFav); // revert
         setActionError(data.error || "Failed to update favorite");
       }
     } catch (err) {
-      setFavorited(!newFav); // revert
+      setIsFavorited(!newFav); // revert
       setActionError("Failed to update favorite");
       console.error(err);
     } finally {
@@ -151,7 +170,6 @@ export default function ModuleDetailPage() {
           <span className="tag">NL</span>
           <span className="tag">{module.studycredit}-ECTS</span>
           <span className="tag">{module.level}</span>
-          <span className="tag tag-green">{module.estimated_difficulty}%</span>
         </div>
 
         {module.shortdescription && module.shortdescription.length > 0 && (
@@ -163,22 +181,29 @@ export default function ModuleDetailPage() {
         <div className="module-actions">
           <button
             className="btn-primary"
-            onClick={handleRegistering}
-            disabled={registeringLoading}
+            onClick={handleEnrolling}
+            disabled={enrollingLoading}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M8 1v14M1 8h14"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            {registeringLoading
-              ? "..."
-              : isRegistered
-              ? "Afmelden"
-              : "Aanmelden"}
+            {isEnrolled ? (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M8 1v14M1 8h14"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
+            {enrollingLoading ? "..." : isEnrolled ? "Afmelden" : "Aanmelden"}
           </button>
           <button
             className="btn-secondary"
@@ -195,7 +220,7 @@ export default function ModuleDetailPage() {
             </svg>
             {favoriteLoading
               ? "..."
-              : favorited
+              : isFavorited
               ? "Verwijder favoriet"
               : "Maak favoriet"}
           </button>

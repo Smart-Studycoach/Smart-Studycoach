@@ -6,8 +6,8 @@ export interface User {
   password: string;
   name: string;
   studentProfile: string;
-  favoriteModules?: string[];
-  chosenModules?: string[];
+  favoriteModules?: number[];
+  chosenModules?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,15 +35,13 @@ export interface AuthResponse {
 }
 
 export interface UserProfileDTO {
-  _id: string;
   name: string;
   student_profile: string;
-  favorite_modules?: string[];
-  chosen_modules?: string[];
+  favorite_modules?: number[];
+  chosen_modules?: number[];
 }
 
 export interface UserProfileInfo {
-  _id: string;
   name: string;
   student_profile: string;
   favorite_modules?: ModuleMinimal[];

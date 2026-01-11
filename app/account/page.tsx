@@ -15,7 +15,7 @@ export default function Account() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch("/api/account");
+        const response = await fetch("/api/users/me/account");
         const data: UserProfileInfo | null = await response.json();
 
         if (!response.ok) {

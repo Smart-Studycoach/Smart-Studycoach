@@ -3,6 +3,8 @@
   margin: 0 auto;
   padding: 2rem;
   color: #323333;
+  background-color: #131313;
+  min-height: 100vh;
 }
 
 .loading, .error {

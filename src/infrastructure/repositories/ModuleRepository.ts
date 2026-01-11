@@ -79,48 +79,47 @@ export class ModuleRepository implements IModuleRepository {
     return this.mapToEntity(doc as IModuleDocument);
   }
 
-  async findMongoIdByModuleId(module_id: string): Promise<string | null> {
-    await connectToDatabase();
-    const parsedId = Number.parseInt(module_id, 10);
-    if (Number.isNaN(parsedId)) return null;
-    const doc = await ModuleModel.findOne({ module_id: parsedId }).select(
-      "_id"
-    );
-    if (!doc) return null;
-    return (doc as IModuleDocument)._id.toString();
-  }
+  // async findMongoIdByModuleId(module_id: string): Promise<string | null> {
+  //   await connectToDatabase();
+  //   const parsedId = Number.parseInt(module_id, 10);
+  //   if (Number.isNaN(parsedId)) return null;
+  //   const doc = await ModuleModel.findOne({ module_id: parsedId }).select(
+  //     "_id"
+  //   );
+  //   if (!doc) return null;
+  //   return (doc as IModuleDocument)._id.toString();
+  // }
 
   async findMinimalsByIds(
-    mongodb_module_ids: string[]
+    module_ids: number[]
   ): Promise<ModuleMinimal[] | null> {
     await connectToDatabase();
 
-    const doc = await ModuleModel.find({
-      _id: { $in: mongodb_module_ids },
+    const docs = await ModuleModel.find({
+      module_id: { $in: module_ids },
     }).select("module_id name");
-    if (!doc) return null;
-    return doc.map((d) => ({
-      mongodb_module_id: (d as IModuleDocument)._id.toString(),
+    if (!docs) return null;
+    return docs.map((d) => ({
       module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
   }
 
-  async addChosenModule(user_id: string, _id: string): Promise<boolean> {
+  async addChosenModule(user_id: string, module_id: number): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.updateOne(
       { _id: user_id },
-      { $addToSet: { chosenModules: _id } }
+      { $addToSet: { chosenModules: module_id } }
     );
     if (!doc) return false;
     return true;
   }
 
-  async pullChosenModule(user_id: string, _id: string): Promise<boolean> {
+  async pullChosenModule(user_id: string, module_id: number): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.updateOne(
       { _id: user_id },
-      { $pull: { chosenModules: _id } }
+      { $pull: { chosenModules: module_id } }
     );
     if (!doc) return false;
     return true;
