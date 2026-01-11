@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
 
     const { userId } = authResult;
 
-    const modules = await userService.getFavoriteModules(userId);
+    const favoriteIds = await userService.getFavoriteModules(userId);
 
-    return NextResponse.json({ modules });
+    return NextResponse.json({ favoriteIds });
   } catch (error) {
     console.error("Error fetching favorites:", error);
-    return NextResponse.json({ modules: [] }, { status: 500 });
+    return NextResponse.json({ favoriteIds: [] }, { status: 500 });
   }
 }

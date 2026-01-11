@@ -6,6 +6,14 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     
+    // Check if IDs are provided
+    const idsParam = searchParams.get('ids');
+    if (idsParam) {
+      const ids = idsParam.split(',').map(id => Number.parseInt(id, 10)).filter(id => !Number.isNaN(id));
+      const modules = await moduleService.getModulesByIds(ids);
+      return NextResponse.json({ modules });
+    }
+    
     const filters: ModuleFilters = {};
     
     const name = searchParams.get('name');

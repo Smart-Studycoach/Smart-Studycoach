@@ -2,25 +2,40 @@ import { cookies } from "next/headers";
 import { ModuleCard } from "@/components/ModuleCard";
 import { Module } from "@/domain/entities/Module";
 
-async function getFavoriteModules(): Promise<Module[]> {
+async function getFavoriteModules(token: string): Promise<Module[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/favorites`, {
+  // First, get the favorite module IDs
+  const favoritesRes = await fetch(`${baseUrl}/api/favorites`, {
     cache: "no-store",
-    credentials: "include",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
   });
 
-  if (!res.ok) return [];
+  if (!favoritesRes.ok) return [];
 
-  const data = await res.json();
-  return data.modules || [];
+  const favoritesData = await favoritesRes.json();
+  const favoriteIds: number[] = favoritesData.favoriteIds || [];
+
+  if (favoriteIds.length === 0) return [];
+
+  // Then, fetch the actual module data for those IDs
+  const modulesRes = await fetch(`${baseUrl}/api/modules?ids=${favoriteIds.join(',')}`, {
+    cache: "no-store",
+  });
+
+  if (!modulesRes.ok) return [];
+
+  const modulesData = await modulesRes.json();
+  return modulesData.modules || [];
 }
 
 export default async function FavoritesPage() {
   const userCookies = await cookies();
-  const userId = userCookies.get("userId")?.value;
+  const token = userCookies.get("token")?.value;
 
-  const modules = userId ? await getFavoriteModules() : [];
+  const modules = token ? await getFavoriteModules(token) : [];
 
   return (
     <div className="min-h-screen bg-background p-8">
