@@ -5,8 +5,9 @@ import { Module } from "@/domain/entities/Module";
 async function getFavoriteModules(): Promise<Module[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/favorites/modules`, {
+  const res = await fetch(`${baseUrl}/api/favorites`, {
     cache: "no-store",
+    credentials: "include",
   });
 
   if (!res.ok) return [];
