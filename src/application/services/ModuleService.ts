@@ -10,10 +10,7 @@ import {
 } from "@/domain";
 
 export class ModuleService {
-  constructor(
-    private readonly moduleRepository: IModuleRepository,
-    private readonly userRepository: IUserRepository
-  ) {}
+  constructor(private readonly moduleRepository: IModuleRepository) {}
 
   async getAllModules(filters?: ModuleFilters): Promise<Module[]> {
     return this.moduleRepository.findAll(filters);
@@ -43,9 +40,9 @@ export class ModuleService {
     }
   }
 
-  async getMongoIdByModuleId(module_id: string): Promise<string | null> {
-    return this.moduleRepository.findMongoIdByModuleId(module_id);
-  }
+  // async getMongoIdByModuleId(module_id: string): Promise<string | null> {
+  //   return this.moduleRepository.findMongoIdByModuleId(module_id);
+  // }
 
   async getModulesByIds(ids: number[]) {
     return this.moduleRepository.findByModuleIds(ids);

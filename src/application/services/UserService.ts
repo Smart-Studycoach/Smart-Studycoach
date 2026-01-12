@@ -1,7 +1,16 @@
-import { IModuleRepository, IUserRepository, User, UserProfileDTO, Module } from "@/domain";
+import {
+  IModuleRepository,
+  IUserRepository,
+  User,
+  UserProfileDTO,
+  Module,
+} from "@/domain";
 
 export class UserService {
-  constructor(private readonly userRepository: IUserRepository, private readonly moduleRepository: IModuleRepository) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly moduleRepository: IModuleRepository
+  ) {}
 
   async toggleFavoriteModule(
     userId: string,
@@ -29,12 +38,11 @@ export class UserService {
     if (!user) return [];
 
     const idsRaw = user.favoriteModules ?? [];
-    const ids = idsRaw.map(id => Number(id));
+    const ids = idsRaw.map((id) => Number(id));
 
     return this.moduleRepository.findByModuleIds(ids);
   }
 
-  async hasUserChosenModule(
   async hasEnrolledInModule(
     userId: string,
     module_id: number

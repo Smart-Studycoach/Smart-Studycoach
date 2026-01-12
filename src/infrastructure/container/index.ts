@@ -24,17 +24,13 @@ const recommendationRepository = new RecommendationRepository();
 export const authService = new AuthServiceInfrastructure();
 
 // Create application service instances with injected dependencies
-export const moduleService = new ModuleService(
-  moduleRepository,
-  userRepository
-);
+export const moduleService = new ModuleService(moduleRepository);
 export const authApplicationService = new AuthApplicationService(
   userRepository,
   authService
 );
 
 export const userService = new UserService(userRepository, moduleRepository);
-export const userService = new UserService(userRepository);
 
 export const recommendationService = new RecommendationService(
   recommendationRepository
