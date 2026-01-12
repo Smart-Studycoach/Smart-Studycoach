@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl">
+    <html lang="nl" className="dark">
       <body>
         <ConditionalHeader />
         <main className="main-content">

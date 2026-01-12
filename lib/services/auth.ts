@@ -114,6 +114,64 @@ class AuthService {
   }
 
   /**
+   * Update user
+   */
+  async updateUser(user: Partial<User>): Promise<User> {
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/auth`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(user),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to update user");
+    }
+
+    // Update localStorage with the updated user data
+    if (typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+
+    return data.user;
+  }
+
+  /**
+   * Update user password
+   */
+  async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/auth/password`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || "Failed to update password");
+    }
+  }
+
+  /**
    * Clear authentication data
    */
   logout(): void {
