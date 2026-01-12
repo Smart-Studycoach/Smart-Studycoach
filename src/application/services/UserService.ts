@@ -33,16 +33,6 @@ export class UserService {
     return this.userRepository.getFavoriteModules(userId);
   }
 
-  async getFavoriteModulesDetailed(userId: string): Promise<Module[]> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return [];
-
-    const idsRaw = user.favoriteModules ?? [];
-    const ids = idsRaw.map((id) => Number(id));
-
-    return this.moduleRepository.findByModuleIds(ids);
-  }
-
   async hasEnrolledInModule(
     userId: string,
     module_id: number
@@ -51,7 +41,6 @@ export class UserService {
   }
 
   async getUserProfile(userId: string): Promise<UserProfileDTO | null> {
-    // Use repository projection to avoid fetching sensitive/large fields
     const profile = await this.userRepository.findProfileById(userId);
     return profile;
   }
