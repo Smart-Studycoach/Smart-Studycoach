@@ -1,7 +1,16 @@
-import { IUserRepository, User, UserProfileDTO } from "@/domain";
+import {
+  IModuleRepository,
+  IUserRepository,
+  User,
+  UserProfileDTO,
+  Module,
+} from "@/domain";
 
 export class UserService {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly moduleRepository: IModuleRepository
+  ) {}
 
   async toggleFavoriteModule(
     userId: string,
@@ -22,6 +31,16 @@ export class UserService {
 
   async getFavoriteModules(userId: string): Promise<number[]> {
     return this.userRepository.getFavoriteModules(userId);
+  }
+
+  async getFavoriteModulesDetailed(userId: string): Promise<Module[]> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) return [];
+
+    const idsRaw = user.favoriteModules ?? [];
+    const ids = idsRaw.map((id) => Number(id));
+
+    return this.moduleRepository.findByModuleIds(ids);
   }
 
   async hasEnrolledInModule(

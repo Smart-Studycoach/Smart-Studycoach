@@ -10,10 +10,7 @@ import {
 } from "@/domain";
 
 export class ModuleService {
-  constructor(
-    private readonly moduleRepository: IModuleRepository,
-    private readonly userRepository: IUserRepository
-  ) {}
+  constructor(private readonly moduleRepository: IModuleRepository) {}
 
   async getAllModules(filters?: ModuleFilters): Promise<Module[]> {
     return this.moduleRepository.findAll(filters);
