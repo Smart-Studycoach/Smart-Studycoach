@@ -79,17 +79,6 @@ export class ModuleRepository implements IModuleRepository {
     return this.mapToEntity(doc as IModuleDocument);
   }
 
-  // async findMongoIdByModuleId(module_id: string): Promise<string | null> {
-  //   await connectToDatabase();
-  //   const parsedId = Number.parseInt(module_id, 10);
-  //   if (Number.isNaN(parsedId)) return null;
-  //   const doc = await ModuleModel.findOne({ module_id: parsedId }).select(
-  //     "_id"
-  //   );
-  //   if (!doc) return null;
-  //   return (doc as IModuleDocument)._id.toString();
-  // }
-
   async findMinimalsByIds(
     module_ids: number[]
   ): Promise<ModuleMinimal[] | null> {
@@ -103,30 +92,5 @@ export class ModuleRepository implements IModuleRepository {
       module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
-  }
-
-  async addChosenModule(user_id: string, module_id: number): Promise<boolean> {
-    await connectToDatabase();
-    const doc = await UserModel.updateOne(
-      { _id: user_id },
-      { $addToSet: { chosenModules: module_id } }
-    );
-    if (!doc) return false;
-    return true;
-  }
-
-  async pullChosenModule(user_id: string, module_id: number): Promise<boolean> {
-    await connectToDatabase();
-    const doc = await UserModel.updateOne(
-      { _id: user_id },
-      { $pull: { chosenModules: module_id } }
-    );
-    if (!doc) return false;
-    return true;
-  }
-
-  async findByModuleIds(ids: number[]) {
-    await connectToDatabase();
-    return ModuleModel.find({ module_id: { $in: ids } });
   }
 }

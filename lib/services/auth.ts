@@ -1,4 +1,10 @@
-import type { AuthResponse, LoginCredentials, RegisterData, User } from "../types/auth";
+import { AuthError } from "@/src/domain/errors/AuthError";
+import type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  User,
+} from "../types/auth";
 
 const API_BASE_URL = "/api";
 
@@ -18,7 +24,7 @@ class AuthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Login failed");
+      throw new AuthError(data.error || "Login failed", response.status);
     }
 
     return data;
@@ -39,7 +45,7 @@ class AuthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Registration failed");
+      throw new AuthError(data.error || "Registration failed", response.status);
     }
 
     return data;
@@ -59,7 +65,7 @@ class AuthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Failed to get user");
+      throw new AuthError(data.error || "Failed to get user", response.status);
     }
 
     return data.user;
@@ -78,7 +84,10 @@ class AuthService {
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.error || "Failed to delete account");
+      throw new AuthError(
+        data.error || "Failed to delete account",
+        response.status
+      );
     }
   }
 

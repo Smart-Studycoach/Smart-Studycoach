@@ -66,7 +66,11 @@ export class RecommendationRepository implements IRecommendationRepository {
     k: number = 3
   ): Promise<Recommendation[]> {
     if (!(await this.checkHealth())) {
-      throw new Error("Recommendation API is unavailable.");
+      throw new HttpError(
+        "Recommendation API is unavailable.",
+        503,
+        `${this.baseUrl}/health`
+      );
     }
 
     try {
