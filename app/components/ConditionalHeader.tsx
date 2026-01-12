@@ -31,7 +31,7 @@ export function ConditionalHeader() {
           
           <nav className="nav">
             <a href="/modules" className="nav-link">Modules</a>
-            <a href="/over-ons" className="nav-link">Over Ons</a>
+            <a href="/recommender" className="nav-link">Aanbeveler</a>
             <a href="/favorieten" className="nav-link">Favorieten</a>
           </nav>
 

@@ -5,8 +5,8 @@ export interface IUserDocument extends Document {
   password: string;
   name: string;
   studentProfile: string;
-  favoriteModules?: string[];
-  chosenModules?: string[];
+  favoriteModules?: number[];
+  chosenModules?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,7 +39,7 @@ const UserSchema = new Schema<IUserDocument>(
       default: [],
     },
     chosenModules: {
-      type: [String],
+      type: [Number],
       default: [],
     },
   },

@@ -1,0 +1,264 @@
+"use client";
+
+import { useEffect, useState, useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { authService } from "@/lib/services/auth";
+import type { User } from "@/lib/types/auth";
+import { submitRecommendation } from "./actions";
+import "./styles.css";
+
+export default function RecommenderPage() {
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [interests, setInterests] = useState("");
+  const [level, setLevel] = useState("");
+  const [location, setLocation] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [recommendations, formAction, isPending] = useActionState(
+    submitRecommendation,
+    null
+  );
+
+  useEffect(() => {
+    setMounted(true);
+    const currentUser = authService.getUser();
+    if (!currentUser) {
+      router.push("/login");
+      return;
+    }
+    setUser(currentUser);
+    
+    // Pre-fill with user's student profile
+    if (currentUser.studentProfile) {
+      setInterests(currentUser.studentProfile);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // Show results after form submission
+    if (recommendations !== null && !isPending) {
+      setShowResults(true);
+    }
+  }, [recommendations, isPending]);
+
+  const handleChangeFilters = () => {
+    setShowResults(false);
+  };
+
+  if (!mounted || !user) {
+    return (
+      <div className="recommender-container">
+        <div className="loading">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="recommender-container">
+      <div className="recommender-header">
+        <h1>Module Aanbevelingen</h1>
+        <p className="subtitle">
+          Vind modules die bij jouw interesses en voorkeuren passen
+        </p>
+      </div>
+
+      <div className="recommender-card">
+        {!showResults ? (
+          <form action={formAction} className="recommender-form">
+            {/* Interests Input */}
+            <div className="form-section">
+              <label htmlFor="interests" className="form-label">
+                Jouw interesses en doelen
+              </label>
+              <p className="form-hint">
+                Beschrijf wat je wilt leren of waar je geïnteresseerd in bent
+              </p>
+              <textarea
+                id="interests"
+                name="interests"
+                value={interests}
+                onChange={(e) => setInterests(e.target.value)}
+                placeholder="Bijvoorbeeld: Visuele communicatie, storytelling, webdesign, app development..."
+                className="form-textarea"
+                rows={4}
+                required
+                minLength={10}
+              />
+              {interests.length > 0 && interests.length < 10 && (
+                <p className="validation-error">
+                  Minimaal 10 karakters vereist ({interests.length}/10)
+                </p>
+              )}
+            </div>
+
+          {/* Level Preference */}
+          <div className="form-section">
+            <label className="form-label">Voorkeursniveau</label>
+            <div className="radio-group">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="level"
+                  value=""
+                  checked={level === ""}
+                  onChange={(e) => setLevel(e.target.value)}
+                />
+                <span>Geen voorkeur</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="level"
+                  value="NLQF5"
+                  checked={level === "NLQF5"}
+                  onChange={(e) => setLevel(e.target.value)}
+                />
+                <span>NLQF5</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="level"
+                  value="NLQF6"
+                  checked={level === "NLQF6"}
+                  onChange={(e) => setLevel(e.target.value)}
+                />
+                <span>NLQF6</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Location Preference */}
+          <div className="form-section">
+            <label className="form-label">Voorkeurslocatie</label>
+            <div className="radio-group">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="location"
+                  value=""
+                  checked={location === ""}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <span>Geen voorkeur</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="location"
+                  value="Den Bosch"
+                  checked={location === "Den Bosch"}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <span>Den Bosch</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="location"
+                  value="Breda"
+                  checked={location === "Breda"}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <span>Breda</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="location"
+                  value="Breda en Den Bosch"
+                  checked={location === "Breda en Den Bosch"}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <span>Breda en Den Bosch</span>
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="location"
+                  value="Den Bosch en Tilburg"
+                  checked={location === "Den Bosch en Tilburg"}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+                <span>Den Bosch en Tilburg</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="submit-button"
+            disabled={isPending || interests.trim().length < 10}
+          >
+            {isPending ? "Aanbevelingen ophalen..." : "Vind modules"}
+          </button>
+        </form>
+        ) : (
+          <div>
+            {/* Change Filters Button */}
+            <div className="filter-change-section">
+              <button
+                onClick={handleChangeFilters}
+                className="change-filters-button"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="filter-icon">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                    stroke="currentColor"
+                  />
+                </svg>
+                Wijzig filters
+              </button>
+            </div>
+
+            {/* Results */}
+            {recommendations && recommendations.length > 0 && (
+              <div className="results-section">
+                <h2 className="results-title">
+                  Aanbevolen modules voor jou
+                </h2>
+                <div className="results-grid">
+                  {recommendations.map((r) => (
+                    <div key={r.module_id} className="recommendation-card">
+                      <div className="recommendation-header">
+                        <h3 className="recommendation-title">{r.module_name}</h3>
+                        <div className="recommendation-score">
+                          {Math.round(r.score * 100)}% match
+                        </div>
+                      </div>
+                      <div className="recommendation-meta">
+                        <span className="meta-tag">{r.level}</span>
+                        <span className="meta-tag">{r.location}</span>
+                      </div>
+                      <p className="recommendation-reason">{r.waarom_match}</p>
+                      <a
+                        href={`/modules/${r.module_id}`}
+                        className="view-module-link"
+                      >
+                        Bekijk module →
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {recommendations && recommendations.length === 0 && (
+              <div className="no-results">
+                <p>Geen modules gevonden die bij jouw criteria passen.</p>
+                <p className="no-results-hint">
+                  Probeer je zoekopdracht aan te passen of kies andere filters.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

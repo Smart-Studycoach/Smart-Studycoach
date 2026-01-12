@@ -8,9 +8,11 @@ export interface IUserRepository {
   update(user: User): Promise<User>;
   delete(id: string): Promise<boolean>;
   existsByEmail(email: string): Promise<boolean>;
-  hasChosenModule(user: User, module_id: string): Promise<boolean>;
-  addFavoriteModule(user: User, module_id: number): Promise<boolean>;
-  removeFavoriteModule(user: User, module_id: number): Promise<boolean>;
-  hasFavoriteModule(user: User, module_id: number): Promise<boolean>;
-  getFavoriteModules(user: User): Promise<number[]>;
+  hasEnrolledInModule(user_id: string, module_id: number): Promise<boolean>;
+  addFavoriteModule(user_id: string, module_id: number): Promise<boolean>;
+  removeFavoriteModule(user_id: string, module_id: number): Promise<boolean>;
+  addEnrolledModule(user_id: string, module_id: number): Promise<boolean>;
+  removeEnrolledModule(user_id: string, module_id: number): Promise<boolean>;
+  hasFavoritedModule(user_id: string, module_id: number): Promise<boolean>;
+  getFavoriteModules(user_id: string): Promise<number[]>;
 }
