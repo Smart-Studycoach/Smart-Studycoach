@@ -33,15 +33,15 @@ export class UserService {
     return this.userRepository.getFavoriteModules(userId);
   }
 
-  async getFavoriteModulesDetailed(userId: string): Promise<Module[]> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return [];
+  // async getFavoriteModulesDetailed(userId: string): Promise<Module[]> {
+  //   const user = await this.userRepository.findById(userId);
+  //   if (!user) return [];
 
-    const idsRaw = user.favoriteModules ?? [];
-    const ids = idsRaw.map((id) => Number(id));
+  //   const idsRaw = user.favoriteModules ?? [];
+  //   const ids = idsRaw.map((id) => Number(id));
 
-    return this.moduleRepository.findByModuleIds(ids);
-  }
+  //   return this.userRepository.findByModuleIds(ids);
+  // }
 
   async hasEnrolledInModule(
     userId: string,

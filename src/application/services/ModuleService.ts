@@ -20,9 +20,7 @@ export class ModuleService {
     return this.moduleRepository.findById(id);
   }
 
-  async getModulesByModule_Ids(
-    module_ids: number[]
-  ): Promise<ModuleMinimal[] | null> {
+  async getModulesByIds(module_ids: number[]): Promise<ModuleMinimal[] | null> {
     const modules = await this.moduleRepository.findMinimalsByIds(module_ids);
     if (!modules) return null;
     return modules;
