@@ -16,6 +16,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(modules);
   } catch (error) {
     console.error("Error fetching favorites:", error);
-    return NextResponse.json({ favoriteIds: [] }, { status: 500 });
+    return NextResponse.json([], { status: 500 });
   }
 }
