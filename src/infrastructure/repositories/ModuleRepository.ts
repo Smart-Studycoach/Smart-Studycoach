@@ -100,7 +100,6 @@ export class ModuleRepository implements IModuleRepository {
     const docs = await ModuleModel.find({
       module_id: { $in: module_ids },
     });
-    if (!docs) return null;
     return docs.map((d) => this.mapToEntity(d as IModuleDocument));
   }
 }
