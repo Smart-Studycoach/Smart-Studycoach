@@ -9,15 +9,15 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const module = await moduleService.getModuleById(id);
+    const moduleData = await moduleService.getModuleById(id);
 
-    if (!module) {
+    if (!moduleData) {
       return NextResponse.json({ error: "Module not found" }, { status: 404 });
     }
 
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse)
-      return NextResponse.json({ module }); // should be handeled in the frontend whether the user is authenticated
+      return NextResponse.json({ module: moduleData }); // should be handeled in the frontend whether the user is authenticated
 
     const { userId } = authResult;
 
@@ -30,7 +30,7 @@ export async function GET(
       Number(id)
     );
 
-    return NextResponse.json({ module, isEnrolled, isFavorited });
+    return NextResponse.json({ module: moduleData, isEnrolled, isFavorited });
   } catch (error) {
     console.error("Failed to fetch module", error);
     return NextResponse.json(

@@ -17,6 +17,7 @@ export function getTokenFromRequest(request: NextRequest): string | null {
   try {
     const cookie = request.cookies.get("token");
     if (cookie) return typeof cookie === "string" ? cookie : cookie.value;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     // ignore and return null
   }

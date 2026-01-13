@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { moduleService } from "@/infrastructure/container";
 import { userService } from "@/infrastructure/container";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
@@ -41,6 +40,9 @@ export async function DELETE(
       succes: true,
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to unenroll" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to unenroll", message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

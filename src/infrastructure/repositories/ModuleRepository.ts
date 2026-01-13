@@ -9,15 +9,6 @@ import {
 } from "@/domain";
 import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
-import {
-  User,
-  CreateUserDTO,
-  LoginDTO,
-  AuthResponse,
-  IUserRepository,
-  IAuthService,
-} from "@/domain";
-import { UserModel } from "../database/models/UserModel";
 
 export class ModuleRepository implements IModuleRepository {
   constructor(private readonly userRepository: IUserRepository) {}

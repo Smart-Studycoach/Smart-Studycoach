@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { authService } from "@/lib/services/auth";
 import type { User } from "@/lib/types/auth";
 
@@ -30,15 +31,15 @@ export function ConditionalHeader() {
           <div className="logo">AVANS</div>
 
           <nav className="nav">
-            <a href="/modules" className="nav-link">
+            <Link href="/modules" className="nav-link">
               Modules
-            </a>
-            <a href="/recommender" className="nav-link">
+            </Link>
+            <Link href="/recommender" className="nav-link">
               Aanbeveler
-            </a>
-            <a href="/favorites" className="nav-link">
+            </Link>
+            <Link href="/favorites" className="nav-link">
               Favorieten
-            </a>
+            </Link>
           </nav>
 
           <div className="user-actions nav">

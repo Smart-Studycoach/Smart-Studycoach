@@ -75,7 +75,7 @@ export async function PUT(
     });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update favorite" },
+      { error: "Failed to update favorite", message: (error as Error).message },
       { status: 500 }
     );
   }
@@ -118,7 +118,7 @@ export async function DELETE(
     });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update favorite" },
+      { error: "Failed to update favorite", message: (error as Error).message },
       { status: 500 }
     );
   }

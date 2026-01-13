@@ -26,10 +26,13 @@ export default function RecommenderPage() {
       router.push("/login");
       return;
     }
-    setUser(currentUser);
-    if (currentUser.studentProfile) {
-      setInterests(currentUser.studentProfile);
-    }
+    // Use a microtask to avoid cascading renders
+    Promise.resolve().then(() => {
+      setUser(currentUser);
+      if (currentUser.studentProfile) {
+        setInterests(currentUser.studentProfile);
+      }
+    });
   }, [router]);
 
   if (!user) {

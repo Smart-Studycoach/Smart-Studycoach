@@ -32,9 +32,11 @@ export function ModuleFilters({
 
   useEffect(() => {
     // Auto-expand if any filter is active
-    if (name || level || studyCredit || location || difficulty) {
-      setIsExpanded(true);
-    }
+    Promise.resolve().then(() => {
+      if (name || level || studyCredit || location || difficulty) {
+        setIsExpanded(true);
+      }
+    });
   }, [name, level, studyCredit, location, difficulty]);
 
   const handleSearch = () => {

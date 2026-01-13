@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
-import { userService, moduleService } from "@/infrastructure/container";
+import { userService } from "@/infrastructure/container";
 
 export async function GET(request: NextRequest) {
   try {

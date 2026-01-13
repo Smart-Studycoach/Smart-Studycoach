@@ -2,7 +2,6 @@
 // Infrastructure layer implements this interface
 
 import { Module, ModuleMinimal } from "../entities/Module";
-import { User } from "@/domain";
 
 export interface ModuleFilters {
   name?: string;

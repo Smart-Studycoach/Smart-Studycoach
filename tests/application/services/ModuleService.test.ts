@@ -1,23 +1,23 @@
-import { ModuleService } from '@/application/services/ModuleService';
-import { Module, ModuleMinimal, ModuleFilters } from '@/domain';
-import { IModuleRepository } from '@/domain/repositories/IModuleRepository';
+import { ModuleService } from "@/application/services/ModuleService";
+import { Module, ModuleMinimal, ModuleFilters } from "@/domain";
+import { IModuleRepository } from "@/domain/repositories/IModuleRepository";
 
 const mockModule: Module = {
-  _id: '507f1f77bcf86cd799439011',
+  _id: "507f1f77bcf86cd799439011",
   module_id: 165,
-  name: 'Introduction to Programming',
-  shortdescription: ['Learn basics', 'Hands-on coding'],
-  description: 'Complete introduction to programming fundamentals',
+  name: "Introduction to Programming",
+  shortdescription: ["Learn basics", "Hands-on coding"],
+  description: "Complete introduction to programming fundamentals",
   studycredit: 5,
-  location: ['Campus A', 'Online'],
-  level: 'Beginner',
-  learningoutcomes: 'Understand variables, loops, and functions',
+  location: ["Campus A", "Online"],
+  level: "Beginner",
+  learningoutcomes: "Understand variables, loops, and functions",
   estimated_difficulty: 3,
   available_spots: 30,
-  start_date: '2026-09-01'
+  start_date: "2026-09-01",
 };
 
-describe('ModuleService - getAllModules', () => {
+describe("ModuleService - getAllModules", () => {
   let mockRepo: jest.Mocked<IModuleRepository>;
   let service: ModuleService;
 
@@ -25,12 +25,12 @@ describe('ModuleService - getAllModules', () => {
     mockRepo = {
       findAll: jest.fn(),
       findById: jest.fn(),
-      findMinimalsByIds: jest.fn()
+      findMinimalsByIds: jest.fn(),
     } as any;
     service = new ModuleService(mockRepo);
   });
 
-  test('returns all modules without filters', async () => {
+  test("returns all modules without filters", async () => {
     const modules = [mockModule];
     mockRepo.findAll.mockResolvedValue(modules);
 
@@ -40,7 +40,7 @@ describe('ModuleService - getAllModules', () => {
     expect(result).toEqual(modules);
   });
 
-  test('returns empty array when no modules exist', async () => {
+  test("returns empty array when no modules exist", async () => {
     mockRepo.findAll.mockResolvedValue([]);
 
     const result = await service.getAllModules();
@@ -48,8 +48,8 @@ describe('ModuleService - getAllModules', () => {
     expect(result).toEqual([]);
   });
 
-  test('filters by name', async () => {
-    const filters: ModuleFilters = { name: 'Programming' };
+  test("filters by name", async () => {
+    const filters: ModuleFilters = { name: "Programming" };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
     const result = await service.getAllModules(filters);
@@ -58,59 +58,64 @@ describe('ModuleService - getAllModules', () => {
     expect(result).toHaveLength(1);
   });
 
-  test('filters by level', async () => {
-    const filters: ModuleFilters = { level: 'Beginner' };
+  test("filters by level", async () => {
+    const filters: ModuleFilters = { level: "Beginner" };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
-    const result = await service.getAllModules(filters);
+    await service.getAllModules(filters);
 
     expect(mockRepo.findAll).toHaveBeenCalledWith(filters);
   });
 
-  test('filters by studycredit', async () => {
+  test("filters by studycredit", async () => {
     const filters: ModuleFilters = { studycredit: 5 };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
-    const result = await service.getAllModules(filters);
+    await service.getAllModules(filters);
 
     expect(mockRepo.findAll).toHaveBeenCalledWith(filters);
   });
 
-  test('filters by location', async () => {
-    const filters: ModuleFilters = { location: 'Campus A' };
+  test("filters by location", async () => {
+    const filters: ModuleFilters = { location: "Campus A" };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
-    const result = await service.getAllModules(filters);
+    await service.getAllModules(filters);
 
     expect(mockRepo.findAll).toHaveBeenCalledWith(filters);
   });
 
-  test('filters by estimated_difficulty', async () => {
+  test("filters by estimated_difficulty", async () => {
     const filters: ModuleFilters = { estimated_difficulty: 3 };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
-    const result = await service.getAllModules(filters);
+    await service.getAllModules(filters);
 
     expect(mockRepo.findAll).toHaveBeenCalledWith(filters);
   });
 
-  test('combines multiple filters', async () => {
+  test("combines multiple filters", async () => {
     const filters: ModuleFilters = {
-      name: 'Programming',
-      level: 'Beginner',
-      studycredit: 5
+      name: "Programming",
+      level: "Beginner",
+      studycredit: 5,
     };
     mockRepo.findAll.mockResolvedValue([mockModule]);
 
-    const result = await service.getAllModules(filters);
+    await service.getAllModules(filters);
 
     expect(mockRepo.findAll).toHaveBeenCalledWith(filters);
   });
 
-  test('returns multiple modules', async () => {
+  test("returns multiple modules", async () => {
     const modules = [
       mockModule,
-      { ...mockModule, _id: '507f1f77bcf86cd799439012', module_id: 166, name: 'Advanced Programming' }
+      {
+        ...mockModule,
+        _id: "507f1f77bcf86cd799439012",
+        module_id: 166,
+        name: "Advanced Programming",
+      },
     ];
     mockRepo.findAll.mockResolvedValue(modules);
 
@@ -120,7 +125,7 @@ describe('ModuleService - getAllModules', () => {
   });
 });
 
-describe('ModuleService - getModuleById', () => {
+describe("ModuleService - getModuleById", () => {
   let mockRepo: jest.Mocked<IModuleRepository>;
   let service: ModuleService;
 
@@ -128,54 +133,54 @@ describe('ModuleService - getModuleById', () => {
     mockRepo = {
       findAll: jest.fn(),
       findById: jest.fn(),
-      findMinimalsByIds: jest.fn()
+      findMinimalsByIds: jest.fn(),
     } as any;
     service = new ModuleService(mockRepo);
   });
 
-  test('returns module when found', async () => {
+  test("returns module when found", async () => {
     mockRepo.findById.mockResolvedValue(mockModule);
 
-    const result = await service.getModuleById('1');
+    const result = await service.getModuleById("1");
 
-    expect(mockRepo.findById).toHaveBeenCalledWith('1');
+    expect(mockRepo.findById).toHaveBeenCalledWith("1");
     expect(result).toEqual(mockModule);
   });
 
-  test('returns null when module not found', async () => {
+  test("returns null when module not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
 
-    const result = await service.getModuleById('999');
+    const result = await service.getModuleById("999");
 
     expect(result).toBeNull();
   });
 
-  test('handles string ID', async () => {
+  test("handles string ID", async () => {
     mockRepo.findById.mockResolvedValue(mockModule);
 
-    await service.getModuleById('123');
+    await service.getModuleById("123");
 
-    expect(mockRepo.findById).toHaveBeenCalledWith('123');
+    expect(mockRepo.findById).toHaveBeenCalledWith("123");
   });
 
-  test('handles numeric string ID', async () => {
+  test("handles numeric string ID", async () => {
     mockRepo.findById.mockResolvedValue(mockModule);
 
-    await service.getModuleById('001');
+    await service.getModuleById("001");
 
-    expect(mockRepo.findById).toHaveBeenCalledWith('001');
+    expect(mockRepo.findById).toHaveBeenCalledWith("001");
   });
 
-  test('handles MongoDB ObjectId format', async () => {
+  test("handles MongoDB ObjectId format", async () => {
     mockRepo.findById.mockResolvedValue(mockModule);
 
-    await service.getModuleById('507f1f77bcf86cd799439011');
+    await service.getModuleById("507f1f77bcf86cd799439011");
 
-    expect(mockRepo.findById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+    expect(mockRepo.findById).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
   });
 });
 
-describe('ModuleService - getModulesByIds', () => {
+describe("ModuleService - getModulesByIds", () => {
   let mockRepo: jest.Mocked<IModuleRepository>;
   let service: ModuleService;
 
@@ -183,15 +188,15 @@ describe('ModuleService - getModulesByIds', () => {
     mockRepo = {
       findAll: jest.fn(),
       findById: jest.fn(),
-      findMinimalsByIds: jest.fn()
+      findMinimalsByIds: jest.fn(),
     } as any;
     service = new ModuleService(mockRepo);
   });
 
-  test('returns minimal modules for valid IDs', async () => {
+  test("returns minimal modules for valid IDs", async () => {
     const minimals: ModuleMinimal[] = [
-      { module_id: 165, name: 'Module 1' },
-      { module_id: 166, name: 'Module 2' }
+      { module_id: 165, name: "Module 1" },
+      { module_id: 166, name: "Module 2" },
     ];
     mockRepo.findMinimalsByIds.mockResolvedValue(minimals);
 
@@ -201,7 +206,7 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result).toEqual(minimals);
   });
 
-  test('returns null when no modules found', async () => {
+  test("returns null when no modules found", async () => {
     mockRepo.findMinimalsByIds.mockResolvedValue(null);
 
     const result = await service.getModulesByIds([999]);
@@ -209,7 +214,7 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result).toBeNull();
   });
 
-  test('handles empty array', async () => {
+  test("handles empty array", async () => {
     mockRepo.findMinimalsByIds.mockResolvedValue([]);
 
     const result = await service.getModulesByIds([]);
@@ -218,8 +223,10 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result).toEqual([]);
   });
 
-  test('handles single ID', async () => {
-    const minimals: ModuleMinimal[] = [{ module_id: 170, name: 'Single Module' }];
+  test("handles single ID", async () => {
+    const minimals: ModuleMinimal[] = [
+      { module_id: 170, name: "Single Module" },
+    ];
     mockRepo.findMinimalsByIds.mockResolvedValue(minimals);
 
     const result = await service.getModulesByIds([170]);
@@ -228,9 +235,9 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result![0].module_id).toBe(170);
   });
 
-  test('handles large array of IDs', async () => {
+  test("handles large array of IDs", async () => {
     const ids = Array.from({ length: 100 }, (_, i) => 165 + i);
-    const minimals = ids.map(id => ({ module_id: id, name: `Module ${id}` }));
+    const minimals = ids.map((id) => ({ module_id: id, name: `Module ${id}` }));
     mockRepo.findMinimalsByIds.mockResolvedValue(minimals);
 
     const result = await service.getModulesByIds(ids);
@@ -238,11 +245,11 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result).toHaveLength(100);
   });
 
-  test('preserves order of results', async () => {
+  test("preserves order of results", async () => {
     const minimals: ModuleMinimal[] = [
-      { module_id: 167, name: 'Third' },
-      { module_id: 165, name: 'First' },
-      { module_id: 166, name: 'Second' }
+      { module_id: 167, name: "Third" },
+      { module_id: 165, name: "First" },
+      { module_id: 166, name: "Second" },
     ];
     mockRepo.findMinimalsByIds.mockResolvedValue(minimals);
 
@@ -253,13 +260,11 @@ describe('ModuleService - getModulesByIds', () => {
     expect(result![2].module_id).toBe(166);
   });
 
-  test('handles duplicate IDs', async () => {
-    const minimals: ModuleMinimal[] = [
-      { module_id: 165, name: 'Module 1' }
-    ];
+  test("handles duplicate IDs", async () => {
+    const minimals: ModuleMinimal[] = [{ module_id: 165, name: "Module 1" }];
     mockRepo.findMinimalsByIds.mockResolvedValue(minimals);
 
-    const result = await service.getModulesByIds([165, 165, 165]);
+    await service.getModulesByIds([165, 165, 165]);
 
     expect(mockRepo.findMinimalsByIds).toHaveBeenCalledWith([165, 165, 165]);
   });
