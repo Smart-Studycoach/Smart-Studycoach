@@ -93,4 +93,27 @@ export class ModuleRepository implements IModuleRepository {
       name: (d as IModuleDocument).name,
     }));
   }
+
+  async findModulesByIds(module_ids: number[]): Promise<Module[] | null> {
+    await connectToDatabase();
+
+    const docs = await ModuleModel.find({
+      module_id: { $in: module_ids },
+    });
+    if (!docs) return null;
+    return docs.map((d) => ({
+      _id: String((d as IModuleDocument)._id),
+      module_id: (d as IModuleDocument).module_id,
+      name: (d as IModuleDocument).name,
+      shortdescription: (d as IModuleDocument).shortdescription,
+      description: (d as IModuleDocument).description,
+      studycredit: (d as IModuleDocument).studycredit,
+      location: (d as IModuleDocument).location,
+      level: (d as IModuleDocument).level,
+      learningoutcomes: (d as IModuleDocument).learningoutcomes,
+      estimated_difficulty: (d as IModuleDocument).estimated_difficulty,
+      available_spots: (d as IModuleDocument).available_spots,
+      start_date: (d as IModuleDocument).start_date,
+    }));
+  }
 }
