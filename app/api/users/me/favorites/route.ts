@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     const modules = await moduleService.getModulesByIds(favoriteIds);
 
-    return NextResponse.json(modules);
+    return NextResponse.json(modules || []);
   } catch (error) {
     console.error("Error fetching favorites:", error);
     return NextResponse.json([], { status: 500 });
