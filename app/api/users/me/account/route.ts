@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     };
 
     if (profile.chosen_modules?.length) {
-      const chosenModules = await moduleService.getModulesByModule_Ids(
+      const chosenModules = await moduleService.getMinimalModulesByIds(
         profile.chosen_modules
       );
       if (chosenModules) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
-import { userService } from "@/infrastructure/container";
+import { userService, moduleService } from "@/infrastructure/container";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,9 +11,11 @@ export async function GET(request: NextRequest) {
 
     const favoriteIds = await userService.getFavoriteModules(userId);
 
-    return NextResponse.json({ favoriteIds });
+    const modules = await moduleService.getModulesByIds(favoriteIds);
+
+    return NextResponse.json(modules || []);
   } catch (error) {
     console.error("Error fetching favorites:", error);
-    return NextResponse.json({ favoriteIds: [] }, { status: 500 });
+    return NextResponse.json([], { status: 500 });
   }
 }

@@ -15,5 +15,5 @@ export interface IModuleRepository {
   findAll(filters?: ModuleFilters): Promise<Module[]>;
   findById(id: string): Promise<Module | null>;
   findMinimalsByIds(module_ids: number[]): Promise<ModuleMinimal[] | null>;
-  findMinimalsByIds(module_ids: number[]): Promise<ModuleMinimal[] | null>;
+  findModulesByIds(module_ids: number[]): Promise<Module[] | null>;
 }

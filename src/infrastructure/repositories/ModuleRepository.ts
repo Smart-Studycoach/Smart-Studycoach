@@ -11,7 +11,6 @@ import { connectToDatabase } from "../database/mongodb";
 import { ModuleModel, IModuleDocument } from "../database/models/ModuleModel";
 
 export class ModuleRepository implements IModuleRepository {
-  constructor(private readonly userRepository: IUserRepository) {}
   private mapToEntity(doc: IModuleDocument): Module {
     return {
       _id: doc._id.toString(),
@@ -83,5 +82,14 @@ export class ModuleRepository implements IModuleRepository {
       module_id: (d as IModuleDocument).module_id,
       name: (d as IModuleDocument).name,
     }));
+  }
+
+  async findModulesByIds(module_ids: number[]): Promise<Module[] | null> {
+    await connectToDatabase();
+
+    const docs = await ModuleModel.find({
+      module_id: { $in: module_ids },
+    });
+    return docs.map((d) => this.mapToEntity(d as IModuleDocument));
   }
 }
