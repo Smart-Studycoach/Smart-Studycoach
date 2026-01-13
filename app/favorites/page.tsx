@@ -5,30 +5,17 @@ import { Module } from "@/domain/entities/Module";
 async function getFavoriteModules(token: string): Promise<Module[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  // First, get the favorite module IDs
-  const favoritesRes = await fetch(`${baseUrl}/api/favorites`, {
+  const res = await fetch(`${baseUrl}/api/users/me/favorites`, {
     cache: "no-store",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!favoritesRes.ok) return [];
+  if (!res.ok) return [];
 
-  const favoritesData = await favoritesRes.json();
-  const favoriteIds: number[] = favoritesData.favoriteIds || [];
-
-  if (favoriteIds.length === 0) return [];
-
-  // Then, fetch the actual module data for those IDs
-  const modulesRes = await fetch(`${baseUrl}/api/modules?ids=${favoriteIds.join(',')}`, {
-    cache: "no-store",
-  });
-
-  if (!modulesRes.ok) return [];
-
-  const modulesData = await modulesRes.json();
-  return modulesData.modules || [];
+  const modules: Module[] = await res.json();
+  return modules;
 }
 
 export default async function FavoritesPage() {

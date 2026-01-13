@@ -93,4 +93,13 @@ export class ModuleRepository implements IModuleRepository {
       name: (d as IModuleDocument).name,
     }));
   }
+
+  async findModulesByIds(module_ids: number[]): Promise<Module[] | null> {
+    await connectToDatabase();
+
+    const docs = await ModuleModel.find({
+      module_id: { $in: module_ids },
+    });
+    return docs.map((d) => this.mapToEntity(d as IModuleDocument));
+  }
 }
