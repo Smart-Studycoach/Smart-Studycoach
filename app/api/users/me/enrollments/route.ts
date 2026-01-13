@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { moduleService } from "@/infrastructure/container";
 import { userService } from "@/infrastructure/container";
 import { requireAuth } from "@/infrastructure/utils/requireAuth";
 
@@ -35,6 +34,9 @@ export async function POST(request: NextRequest) {
       moduleId: body.module_id,
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to enroll" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to enroll", message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

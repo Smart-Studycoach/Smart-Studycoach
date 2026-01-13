@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import "./styles.css";
 
 interface Module {
@@ -306,9 +307,11 @@ export default function ModuleDetailPage() {
 
       <div className="module-content">
         <div className="module-image">
-          <img
+          <Image
             src={`https://picsum.photos/seed/${module.module_id}/800/500`}
             alt={module.name}
+            width={800}
+            height={500}
             onError={(e) => {
               e.currentTarget.src =
                 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23323333" width="400" height="300"/%3E%3Ctext fill="%23fff" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20"%3EModule Afbeelding%3C/text%3E%3C/svg%3E';
@@ -420,9 +423,12 @@ export default function ModuleDetailPage() {
 
         <div className="teacher-card">
           <div className="teacher-avatar">
-            <img
+            <Image
               src={`https://i.pravatar.cc/150?img=${module.module_id % 70}`}
               alt="Docent"
+              width={100}
+              height={100}
+              className="teacher-image"
               onError={(e) => {
                 e.currentTarget.src =
                   'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle fill="%23C6002A" cx="50" cy="50" r="50"/%3E%3Ctext fill="%23fff" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="40"%3ED%3C/text%3E%3C/svg%3E';

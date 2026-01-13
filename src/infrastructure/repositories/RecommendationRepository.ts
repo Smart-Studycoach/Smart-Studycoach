@@ -50,6 +50,7 @@ export class RecommendationRepository implements IRecommendationRepository {
       };
 
       return isHealthy;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       this.healthCheckCache = {
         isHealthy: false,

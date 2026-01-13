@@ -6,7 +6,6 @@ import {
   ModuleMinimal,
   IModuleRepository,
   ModuleFilters,
-  IUserRepository,
 } from "@/domain";
 
 export class ModuleService {

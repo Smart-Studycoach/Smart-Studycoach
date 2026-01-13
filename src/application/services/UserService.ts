@@ -1,10 +1,4 @@
-import {
-  IModuleRepository,
-  IUserRepository,
-  User,
-  UserProfileDTO,
-  Module,
-} from "@/domain";
+import { IModuleRepository, IUserRepository, UserProfileDTO } from "@/domain";
 
 export class UserService {
   constructor(
