@@ -57,7 +57,7 @@ class AuthService {
   async deleteAccount(): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: "DELETE",
-
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -76,6 +76,7 @@ class AuthService {
     try {
       const response = await fetch(`${API_BASE_URL}/auth`, {
         method: "GET",
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -99,6 +100,7 @@ class AuthService {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(user),
     });
 
@@ -120,6 +122,7 @@ class AuthService {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ oldPassword, newPassword }),
     });
 
@@ -136,6 +139,7 @@ class AuthService {
     try {
       await fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
+        credentials: "include",
       });
     } catch (error) {
       console.error("Failed to clear auth cookie:", error);
