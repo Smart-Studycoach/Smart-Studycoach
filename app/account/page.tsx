@@ -337,7 +337,28 @@ export default function Account() {
           </Card>
           </div>
 
-          <Card className="border-destructive/50 py-8 mb-6">
+          <Card className="py-8">
+            <CardHeader>
+              <CardTitle className="text-2xl">Gekozen modules</CardTitle>
+              <CardDescription>
+                Modules die je hebt gekozen voor je studie
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {userProfile.chosen_modules &&
+              userProfile.chosen_modules.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userProfile.chosen_modules.map((module: ModuleMinimal) => (
+                  <MiniModuleCard key={module.module_id} module={module} />
+                  ))}
+                </div>
+                ) : (
+                <p className="text-muted-foreground text-center py-8">Nog geen gekozen modules.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-destructive/50 py-8 mt-6">
             <CardHeader>
               <CardTitle className="text-destructive text-2xl">Danger Zone</CardTitle>
               <CardDescription>
@@ -377,27 +398,6 @@ export default function Account() {
                   {isDeleting ? "Deleting..." : "Delete Account"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="py-8">
-            <CardHeader>
-              <CardTitle className="text-2xl">Gekozen modules</CardTitle>
-              <CardDescription>
-                Modules die je hebt gekozen voor je studie
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {userProfile.chosen_modules &&
-              userProfile.chosen_modules.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {userProfile.chosen_modules.map((module: ModuleMinimal) => (
-                  <MiniModuleCard key={module.module_id} module={module} />
-                  ))}
-                </div>
-                ) : (
-                <p className="text-muted-foreground text-center py-8">Nog geen gekozen modules.</p>
-              )}
             </CardContent>
           </Card>
         </div>
