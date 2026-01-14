@@ -74,13 +74,12 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const authResponse = await authService.register({
+      await authService.register({
         email,
         name,
         password,
         studentProfile,
       });
-      authService.storeAuth(authResponse);
       router.push("/");
     } catch (err) {
       if (err instanceof AuthError) {

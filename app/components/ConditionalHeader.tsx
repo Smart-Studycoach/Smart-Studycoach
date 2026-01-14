@@ -11,12 +11,15 @@ export function ConditionalHeader() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const currentUser = authService.getUser();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUser(currentUser);
-    setIsLoading(false);
+    const fetchUser = async () => {
+      const currentUser = await authService.getUser();
+      setUser(currentUser);
+      setIsLoading(false);
+    };
+    fetchUser();
   }, [pathname]);
 
   // Hide header on login and register pages
@@ -30,19 +33,46 @@ export function ConditionalHeader() {
         <div className="header-content">
           <div className="logo">AVANS</div>
 
-          <nav className="nav">
-            <Link href="/modules" className="nav-link">
+          <button
+            className={`hamburger ${isMobileMenuOpen ? "hamburger-open" : ""}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <nav className={`nav ${isMobileMenuOpen ? "nav-open" : ""}`}>
+            <Link href="/modules" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Modules
             </Link>
-            <Link href="/recommender" className="nav-link">
+            <Link href="/recommender" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Aanbeveler
             </Link>
-            <Link href="/favorites" className="nav-link">
+            <Link href="/favorites" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Favorieten
             </Link>
+            <div className="mobile-nav-divider"></div>
+            {user && (
+              <Link href="/account" className="nav-link nav-link-mobile-account" onClick={() => setIsMobileMenuOpen(false)}>
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+                  {user.name}
+                  <Image
+                    src={`https://api.dicebear.com/9.x/miniavs/svg?seed=${encodeURIComponent(
+                      user._id
+                    )}`}
+                    alt={user.name}
+                    width={28}
+                    height={28}
+                    style={{ borderRadius: "50%" }}
+                  />
+                </span>
+              </Link>
+            )}
           </nav>
 
-          <div className="user-actions nav">
+          <div className="user-actions nav desktop-only">
             {isLoading ? (
               <div
                 aria-hidden="true"
@@ -52,7 +82,7 @@ export function ConditionalHeader() {
               <a
                 href="/account"
                 className="nav-link-profile"
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
               >
                 {user.name}
                 <Image
@@ -60,8 +90,8 @@ export function ConditionalHeader() {
                     user._id
                   )}`}
                   alt={user.name}
-                  width={32}
-                  height={32}
+                  width={28}
+                  height={28}
                   style={{ borderRadius: "50%" }}
                 />
               </a>

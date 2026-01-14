@@ -18,6 +18,7 @@ class AuthService {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(credentials),
     });
 
@@ -39,6 +40,7 @@ class AuthService {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(userData),
     });
 
@@ -52,34 +54,12 @@ class AuthService {
   }
 
   /**
-   * Get current authenticated user
+   * Delete current user account (uses HttpOnly cookie for auth)
    */
-  async getCurrentUser(token: string): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/auth`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new AuthError(data.error || "Failed to get user", response.status);
-    }
-
-    return data.user;
-  }
-
-  /**
-   * Delete current user account
-   */
-  async deleteAccount(token: string): Promise<void> {
+  async deleteAccount(): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -92,52 +72,37 @@ class AuthService {
   }
 
   /**
-   * Store authentication data in localStorage
+   * Get current user from the server (using HttpOnly cookie)
    */
-  storeAuth(authResponse: AuthResponse): void {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("token", authResponse.token);
-      localStorage.setItem("user", JSON.stringify(authResponse.user));
+  async getUser(): Promise<User | null> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data.user;
+    } catch (error) {
+      console.error("Failed to get user:", error);
+      return null;
     }
   }
 
   /**
-   * Get stored token
-   */
-  getToken(): string | null {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("token");
-    }
-    return null;
-  }
-
-  /**
-   * Get stored user
-   */
-  getUser(): User | null {
-    if (typeof window !== "undefined") {
-      const userStr = localStorage.getItem("user");
-      return userStr ? JSON.parse(userStr) : null;
-    }
-    return null;
-  }
-
-  /**
-   * Update user
+   * Update user (uses HttpOnly cookie for auth)
    */
   async updateUser(user: Partial<User>): Promise<User> {
-    const token = this.getToken();
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
       body: JSON.stringify(user),
     });
 
@@ -147,30 +112,19 @@ class AuthService {
       throw new Error(data.error || "Failed to update user");
     }
 
-    // Update localStorage with the updated user data
-    if (typeof window !== "undefined") {
-      localStorage.setItem("user", JSON.stringify(data.user));
-    }
-
     return data.user;
   }
 
   /**
-   * Update user password
+   * Update user password (uses HttpOnly cookie for auth)
    */
   async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
-    const token = this.getToken();
-    
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
     const response = await fetch(`${API_BASE_URL}/auth/password`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
       body: JSON.stringify({ oldPassword, newPassword }),
     });
 
@@ -181,20 +135,25 @@ class AuthService {
   }
 
   /**
-   * Clear authentication data
+   * Clear authentication data (clears HttpOnly cookie)
    */
-  logout(): void {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+  async logout(): Promise<void> {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Failed to clear auth cookie:", error);
     }
   }
 
   /**
-   * Check if user is authenticated
+   * Check if user is authenticated by calling the API
    */
-  isAuthenticated(): boolean {
-    return this.getToken() !== null;
+  async isAuthenticated(): Promise<boolean> {
+    const user = await this.getUser();
+    return user !== null;
   }
 }
 

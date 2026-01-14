@@ -21,18 +21,18 @@ export default function RecommenderPage() {
 
   // Auth check and profile pre-fill
   useEffect(() => {
-    const currentUser = authService.getUser();
-    if (!currentUser) {
-      router.push("/login");
-      return;
-    }
-    // Use a microtask to avoid cascading renders
-    Promise.resolve().then(() => {
+    const fetchUser = async () => {
+      const currentUser = await authService.getUser();
+      if (!currentUser) {
+        router.push("/login");
+        return;
+      }
       setUser(currentUser);
       if (currentUser.studentProfile) {
         setInterests(currentUser.studentProfile);
       }
-    });
+    };
+    fetchUser();
   }, [router]);
 
   if (!user) {

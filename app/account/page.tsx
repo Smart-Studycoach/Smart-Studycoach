@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authService } from "@/lib/services/auth";
-import { useRouter } from "next/navigation";
 
 export default function Account() {
   const [userProfile, setUserProfile] = useState<UserProfileInfo | null>(null);
@@ -27,7 +26,6 @@ export default function Account() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -42,7 +40,8 @@ export default function Account() {
         setUserProfile(data);
         if (data) {
           setEditedName(data.name);
-          const user = authService.getUser();
+          // Fetch full user data including email
+          const user = await authService.getUser();
           if (user) {
             setEditedEmail(user.email);
           }
@@ -58,9 +57,9 @@ export default function Account() {
     fetchAccount();
   }, []);
 
-  const handleLogout = () => {
-    authService.logout();
-    router.push("/login");
+  const handleLogout = async () => {
+    await authService.logout();
+    window.location.href = "/login";
   };
 
   const handleDeleteAccount = async () => {
@@ -70,12 +69,8 @@ export default function Account() {
 
     setIsDeleting(true);
     try {
-      const token = authService.getToken();
-      if (token) {
-        await authService.deleteAccount(token);
-        authService.logout();
-        router.push("/login");
-      }
+      await authService.deleteAccount();
+      window.location.href = "/login";
     } catch (err) {
       setError("Failed to delete account");
       console.error(err);
@@ -88,11 +83,11 @@ export default function Account() {
     setIsEditing(true);
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     setIsEditing(false);
     if (userProfile) {
       setEditedName(userProfile.name);
-      const user = authService.getUser();
+      const user = await authService.getUser();
       if (user) {
         setEditedEmail(user.email);
       }
@@ -257,7 +252,7 @@ export default function Account() {
                     <Input
                       id="email"
                       type="email"
-                      value={authService.getUser()?.email || ""}
+                      value={editedEmail || ""}
                       disabled={true}
                     />
                   )}
@@ -342,7 +337,28 @@ export default function Account() {
           </Card>
           </div>
 
-          <Card className="border-destructive/50 py-8 mb-6">
+          <Card className="py-8">
+            <CardHeader>
+              <CardTitle className="text-2xl">Gekozen modules</CardTitle>
+              <CardDescription>
+                Modules die je hebt gekozen voor je studie
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {userProfile.chosen_modules &&
+              userProfile.chosen_modules.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {userProfile.chosen_modules.map((module: ModuleMinimal) => (
+                  <MiniModuleCard key={module.module_id} module={module} />
+                  ))}
+                </div>
+                ) : (
+                <p className="text-muted-foreground text-center py-8">Nog geen gekozen modules.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-destructive/50 py-8 mt-6">
             <CardHeader>
               <CardTitle className="text-destructive text-2xl">Danger Zone</CardTitle>
               <CardDescription>
@@ -382,27 +398,6 @@ export default function Account() {
                   {isDeleting ? "Deleting..." : "Delete Account"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="py-8">
-            <CardHeader>
-              <CardTitle className="text-2xl">Gekozen modules</CardTitle>
-              <CardDescription>
-                Modules die je hebt gekozen voor je studie
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {userProfile.chosen_modules &&
-              userProfile.chosen_modules.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {userProfile.chosen_modules.map((module: ModuleMinimal) => (
-                  <MiniModuleCard key={module.module_id} module={module} />
-                  ))}
-                </div>
-                ) : (
-                <p className="text-muted-foreground text-center py-8">Nog geen gekozen modules.</p>
-              )}
             </CardContent>
           </Card>
         </div>

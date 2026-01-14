@@ -9,7 +9,7 @@ export async function GET(
   try {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) {
-      return NextResponse.json({ favorite: false });
+      return authResult;
     }
 
     const { userId } = authResult;
