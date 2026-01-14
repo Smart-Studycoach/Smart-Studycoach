@@ -13,10 +13,12 @@ export function ConditionalHeader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = authService.getUser();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUser(currentUser);
-    setIsLoading(false);
+    const fetchUser = async () => {
+      const currentUser = await authService.getUser();
+      setUser(currentUser);
+      setIsLoading(false);
+    };
+    fetchUser();
   }, [pathname]);
 
   // Hide header on login and register pages

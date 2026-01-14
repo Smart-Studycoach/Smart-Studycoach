@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authService } from "@/lib/services/auth";
-import { useRouter } from "next/navigation";
 
 export default function Account() {
   const [userProfile, setUserProfile] = useState<UserProfileInfo | null>(null);
@@ -27,7 +26,6 @@ export default function Account() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -42,7 +40,8 @@ export default function Account() {
         setUserProfile(data);
         if (data) {
           setEditedName(data.name);
-          const user = authService.getUser();
+          // Fetch full user data including email
+          const user = await authService.getUser();
           if (user) {
             setEditedEmail(user.email);
           }
@@ -58,9 +57,9 @@ export default function Account() {
     fetchAccount();
   }, []);
 
-  const handleLogout = () => {
-    authService.logout();
-    router.push("/login");
+  const handleLogout = async () => {
+    await authService.logout();
+    window.location.href = "/login";
   };
 
   const handleDeleteAccount = async () => {
@@ -70,12 +69,8 @@ export default function Account() {
 
     setIsDeleting(true);
     try {
-      const token = authService.getToken();
-      if (token) {
-        await authService.deleteAccount(token);
-        authService.logout();
-        router.push("/login");
-      }
+      await authService.deleteAccount();
+      window.location.href = "/login";
     } catch (err) {
       setError("Failed to delete account");
       console.error(err);
@@ -88,11 +83,11 @@ export default function Account() {
     setIsEditing(true);
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     setIsEditing(false);
     if (userProfile) {
       setEditedName(userProfile.name);
-      const user = authService.getUser();
+      const user = await authService.getUser();
       if (user) {
         setEditedEmail(user.email);
       }
@@ -257,7 +252,7 @@ export default function Account() {
                     <Input
                       id="email"
                       type="email"
-                      value={authService.getUser()?.email || ""}
+                      value={editedEmail || ""}
                       disabled={true}
                     />
                   )}

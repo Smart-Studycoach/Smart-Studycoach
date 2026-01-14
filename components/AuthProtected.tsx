@@ -9,9 +9,10 @@ export function AuthProtected({ children }: { children: React.ReactNode }) {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      if (!authService.isAuthenticated()) {
-        router.push("/login");
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      if (!isAuth) {
+        window.location.href = "/login";
       } else {
         setIsChecking(false);
       }

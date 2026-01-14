@@ -19,8 +19,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const authResponse = await authService.login({ email, password });
-      authService.storeAuth(authResponse);
+      await authService.login({ email, password });
       router.push("/");
     } catch (err) {
       if (err instanceof AuthError) {
