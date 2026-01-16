@@ -2,19 +2,24 @@ import { ModuleCard } from "@/components/ModuleCard";
 import { ModulePagination } from "@/components/ModulePagination";
 import { ModuleFilters } from "@/components/ModuleFilters";
 import { Module } from "@/domain/entities/Module";
-import { ModuleFilters as ModuleFiltersType } from "@/domain/repositories/IModuleRepository";
 import { cookies } from "next/headers";
-import { moduleService, userService, authService } from "@/infrastructure/container";
 
 const ITEMS_PER_PAGE = 20;
 
 async function getFavoriteModuleIds(token: string): Promise<number[]> {
   try {
-    const decoded = authService.verifyToken(token);
-    if (!decoded?.userId) return [];
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/users/me/favorites`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    const favoriteIds = await userService.getFavoriteModules(decoded.userId);
-    return favoriteIds;
+    if (!res.ok) return [];
+
+    const modules: Module[] = await res.json();
+    return modules.map(m => m.module_id);
   } catch (error) {
     console.error("Error fetching favorites:", error);
     return [];
@@ -25,26 +30,31 @@ async function getModules(
   searchParams?: Record<string, string>
 ): Promise<Module[]> {
   try {
-    const filters: ModuleFiltersType = {};
+    const params = new URLSearchParams();
 
-    if (searchParams?.name) filters.name = searchParams.name;
-    if (searchParams?.level) filters.level = searchParams.level;
-    if (searchParams?.studyCredit) {
-      const parsedCredit = Number.parseInt(searchParams.studyCredit, 10);
-      if (!Number.isNaN(parsedCredit)) {
-        filters.studycredit = parsedCredit;
-      }
-    }
-    if (searchParams?.location) filters.location = searchParams.location;
-    if (searchParams?.difficulty) {
-      const parsedDifficulty = Number.parseInt(searchParams.difficulty, 10);
-      if (!Number.isNaN(parsedDifficulty)) {
-        filters.estimated_difficulty = parsedDifficulty;
-      }
+    // Pass through all filter parameters to the backend
+    if (searchParams?.name) params.set("name", searchParams.name);
+    if (searchParams?.level) params.set("level", searchParams.level);
+    if (searchParams?.studyCredit)
+      params.set("studyCredit", searchParams.studyCredit);
+    if (searchParams?.location) params.set("location", searchParams.location);
+    if (searchParams?.difficulty)
+      params.set("difficulty", searchParams.difficulty);
+
+    const queryString = params.toString();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const url = `${baseUrl}/api/modules${queryString ? `?${queryString}` : ""}`;
+
+    const response = await fetch(url, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch modules");
     }
 
-    const modules = await moduleService.getAllModules(filters);
-    return modules;
+    const data = await response.json();
+    return data.modules || [];
   } catch (error) {
     console.error("Error fetching modules:", error);
     return [];
