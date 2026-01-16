@@ -56,9 +56,19 @@ jobs:
         NODE_ENV: production
         SKIP_ENV_VALIDATION: true
 
+    - name: Create deployment package
+      run: |
+        mkdir deploy
+        cp -r .next deploy/
+        cp -r public deploy/
+        cp -r node_modules deploy/
+        cp package.json deploy/
+        cp next.config.ts deploy/ || true
+
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: .
+        package: deploy
+        startup-command: 'pnpm start'
