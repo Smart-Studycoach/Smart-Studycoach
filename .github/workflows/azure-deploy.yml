@@ -53,6 +53,8 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         REACT_APP_RECOMMENDATION_API_KEY: ${{ secrets.REACT_APP_RECOMMENDATION_API_KEY }}
         REACT_APP_RECOMMENDATION_API_URL: ${{ secrets.REACT_APP_RECOMMENDATION_API_URL }}
+        NODE_ENV: production
+        SKIP_ENV_VALIDATION: true
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
