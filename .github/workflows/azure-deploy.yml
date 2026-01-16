@@ -19,52 +19,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-
-    - name: Get pnpm store directory
-      id: pnpm-cache
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-    - name: Setup pnpm cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
-
-    - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
-
-    - name: Build Next.js application
-      run: pnpm run build
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        REACT_APP_RECOMMENDATION_API_KEY: ${{ secrets.REACT_APP_RECOMMENDATION_API_KEY }}
-        REACT_APP_RECOMMENDATION_API_URL: ${{ secrets.REACT_APP_RECOMMENDATION_API_URL }}
-        NODE_ENV: production
-        SKIP_ENV_VALIDATION: true
-
-    - name: Prepare deployment package
-      run: |
-        cp -r .next/standalone ./deploy
-        cp -r .next/static ./deploy/.next/static
-        cp -r public ./deploy/public
-        
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./deploy
+        package: .
