@@ -2,8 +2,29 @@ import { ModuleCard } from "@/components/ModuleCard";
 import { ModulePagination } from "@/components/ModulePagination";
 import { ModuleFilters } from "@/components/ModuleFilters";
 import { Module } from "@/domain/entities/Module";
+import { cookies } from "next/headers";
 
 const ITEMS_PER_PAGE = 20;
+
+async function getFavoriteModuleIds(token: string): Promise<number[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/users/me/favorites`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) return [];
+
+    const modules: Module[] = await res.json();
+    return modules.map(m => m.module_id);
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return [];
+  }
+}
 
 async function getModules(
   searchParams?: Record<string, string>
@@ -73,10 +94,15 @@ export default async function Index({
 }) {
   const params = await searchParams;
 
+  // Get user's token
+  const userCookies = await cookies();
+  const token = userCookies.get("token")?.value;
+
   // Parallel fetch
-  const [modules, allModules] = await Promise.all([
+  const [modules, allModules, favoriteIds] = await Promise.all([
     getModules(params),
     getAllModulesForFilters(),
+    token ? getFavoriteModuleIds(token) : Promise.resolve([]),
   ]);
 
   const currentPage = Number(params?.page) || 1;
@@ -131,6 +157,7 @@ export default async function Index({
                   { label: `${module.studycredit}ects` },
                   { label: module.level },
                 ]}
+                isFavorite={favoriteIds.includes(module.module_id)}
               />
             ))
           ) : (
