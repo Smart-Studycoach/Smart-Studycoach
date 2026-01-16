@@ -17,7 +17,8 @@ export async function submitRecommendation(
   try {
     const interests = formData.get("interests")?.toString()?.trim() ?? "";
     const level = formData.get("level")?.toString() ?? "";
-    const location = formData.get("location")?.toString() ?? "";
+    const locations = formData.getAll("location").map((l) => l.toString());
+    const location = locations.length > 0 ? locations.join(" of ") : "";
     const k = 3;
 
     // Backend validation

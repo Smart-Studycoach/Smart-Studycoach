@@ -13,7 +13,7 @@ export default function RecommenderPage() {
   const [user, setUser] = useState<User | null>(null);
   const [interests, setInterests] = useState("");
   const [level, setLevel] = useState("");
-  const [location, setLocation] = useState("");
+  const [locations, setLocations] = useState<string[]>([]);
   const [result, formAction, isPending] = useActionState(
     submitRecommendation,
     null
@@ -113,25 +113,31 @@ export default function RecommenderPage() {
             </div>
 
             <div className="form-section">
-              <label className="form-label">Voorkeurslocatie</label>
-              <div className="radio-group">
+              <label className="form-label">Voorkeurslocatie(s)</label>
+              <p className="form-hint">
+                Selecteer één of meerdere locaties
+              </p>
+              <div className="checkbox-group">
                 {[
-                  { value: "", label: "Geen voorkeur" },
                   { value: "Den Bosch", label: "Den Bosch" },
                   { value: "Breda", label: "Breda" },
-                  { value: "Breda en Den Bosch", label: "Breda en Den Bosch" },
-                  {
-                    value: "Den Bosch en Tilburg",
-                    label: "Den Bosch en Tilburg",
-                  },
+                  { value: "Tilburg", label: "Tilburg" },
                 ].map(({ value, label }) => (
-                  <label key={value} className="radio-label">
+                  <label key={value} className="checkbox-label">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="location"
                       value={value}
-                      checked={location === value}
-                      onChange={(e) => setLocation(e.target.value)}
+                      checked={locations.includes(value)}
+                      onChange={(e) => {
+                        setLocations((prevLocations) => {
+                          if (e.target.checked) {
+                            return [...prevLocations, value];
+                          } else {
+                            return prevLocations.filter((l) => l !== value);
+                          }
+                        });
+                      }}
                     />
                     <span>{label}</span>
                   </label>

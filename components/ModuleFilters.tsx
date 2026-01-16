@@ -120,11 +120,11 @@ export function ModuleFilters({
             {/* Search Input */}
             <div className="mt-4 mb-4">
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                Zoek op naam
+                Search by name
               </label>
               <input
                 type="text"
-                placeholder="Typ modulenaam..."
+                placeholder="Type module name..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -137,14 +137,14 @@ export function ModuleFilters({
               {/* Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Niveau
+                  Level
                 </label>
                 <select
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
                   className={selectClassName}
                 >
-                  <option value="">Alle niveaus</option>
+                  <option value="">All levels</option>
                   {levels.map((lv) => (
                     <option key={lv} value={lv}>
                       {lv}
@@ -156,14 +156,14 @@ export function ModuleFilters({
               {/* Study Credit */}
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Studiepunten
+                  Study credits
                 </label>
                 <select
                   value={studyCredit}
                   onChange={(e) => setStudyCredit(e.target.value)}
                   className={selectClassName}
                 >
-                  <option value="">Alle punten</option>
+                  <option value="">All credits</option>
                   {studyCredits.map((sc) => (
                     <option key={sc} value={sc}>
                       {sc} ECTS
@@ -175,14 +175,14 @@ export function ModuleFilters({
               {/* Location */}
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Locatie
+                  Location
                 </label>
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   className={selectClassName}
                 >
-                  <option value="">Alle locaties</option>
+                  <option value="">All locations</option>
                   {locations.map((loc) => (
                     <option key={loc} value={loc}>
                       {loc}
@@ -195,14 +195,14 @@ export function ModuleFilters({
               {difficulties.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Moeilijkheid
+                    Difficulty
                   </label>
                   <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
                     className={selectClassName}
                   >
-                    <option value="">Alle moeilijkheden</option>
+                    <option value="">All difficulties</option>
                     {difficulties.map((diff) => (
                       <option key={diff} value={diff}>
                         {diff}
@@ -219,14 +219,14 @@ export function ModuleFilters({
                 onClick={handleSearch}
                 className="flex-1 px-6 py-2.5 bg-[#C6002A] text-white font-semibold rounded-lg hover:bg-[#a00020] transition-colors text-sm"
               >
-                Filters Toepassen
+                Apply Filters
               </button>
               {hasActiveFilters && (
                 <button
                   onClick={handleClear}
                   className="px-6 py-2.5 bg-transparent border border-zinc-700 text-gray-300 font-semibold rounded-lg hover:bg-[#252525] transition-colors text-sm"
                 >
-                  Wissen
+                  Clear
                 </button>
               )}
             </div>
