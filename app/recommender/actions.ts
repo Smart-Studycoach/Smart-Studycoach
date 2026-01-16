@@ -7,8 +7,17 @@ import { RecommendationDto } from "@/application/dto/RecommendationDto";
 import { RecommendationMapper } from "@/infrastructure/mappers/RecommendationMapper";
 
 type RecommendationResult =
-  | { success: true; data: RecommendationDto[] }
-  | { success: false; error: string; errorDetails?: { status?: number; body?: string } };
+  | {
+      success: true;
+      data: RecommendationDto[];
+      filters: { interests: string; level: string; locations: string[] };
+    }
+  | {
+      success: false;
+      error: string;
+      filters: { interests: string; level: string; locations: string[] };
+      errorDetails?: { status?: number; body?: string };
+    };
 
 export async function submitRecommendation(
   _: RecommendationResult | null,
@@ -26,6 +35,7 @@ export async function submitRecommendation(
       return {
         success: false,
         error: "Interesses moeten minimaal 10 karakters bevatten",
+        filters: { interests, level, locations },
       };
     }
 
@@ -53,6 +63,7 @@ export async function submitRecommendation(
     return {
       success: true,
       data: RecommendationMapper.toApplicationList(recommendations),
+      filters: { interests, level, locations },
     };
   } catch (error) {
     console.error("Recommendation error:", error);
@@ -77,6 +88,7 @@ export async function submitRecommendation(
       return {
         success: false,
         error: detailMessage,
+        filters: { interests, level, locations },
         errorDetails: {
           status: httpError.status,
           body: httpError.body,
@@ -90,6 +102,7 @@ export async function submitRecommendation(
         error instanceof Error
           ? error.message
           : "Er is iets misgegaan bij het ophalen van aanbevelingen. Probeer het opnieuw.",
+      filters: { interests, level, locations },
     };
   }
 }

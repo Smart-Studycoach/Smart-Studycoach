@@ -18,6 +18,12 @@ export default function RecommenderPage() {
     submitRecommendation,
     null
   );
+  // Reset locaties bij error, zodat er met een schone selectie opnieuw gekozen kan worden
+  useEffect(() => {
+    if (result?.success === false) {
+      setLocations([]);
+    }
+  }, [result]);
 
   // Auth check and profile pre-fill
   useEffect(() => {
