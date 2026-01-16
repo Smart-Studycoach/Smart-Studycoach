@@ -37,7 +37,11 @@ export class ModuleRepository implements IModuleRepository {
     if (filters?.name) {
       // Escape special regex characters to prevent injection
       const escapedName = filters.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      query.name = { $regex: escapedName, $options: "i" };
+      // Search in both name and shortdescription fields
+      query.$or = [
+        { name: { $regex: escapedName, $options: "i" } },
+        { shortdescription: { $regex: escapedName, $options: "i" } }
+      ];
     }
 
     if (filters?.level) {
