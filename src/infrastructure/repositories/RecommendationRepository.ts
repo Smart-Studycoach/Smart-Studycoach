@@ -19,8 +19,8 @@ class HttpError extends Error {
 }
 
 export class RecommendationRepository implements IRecommendationRepository {
-  private readonly baseUrl = "http://localhost:8000";
-  private readonly apiKey = "dev-api-key-12345"; // In production, this MUST be an environment variable
+  private readonly baseUrl = process.env.REACT_APP_RECOMMENDATION_API_URL || "http://localhost:8000";
+  private readonly apiKey = process.env.REACT_APP_RECOMMENDATION_API_KEY || "dev-api-key-12345"; // In production, this MUST be an environment variable
   private healthCheckCache: { isHealthy: boolean; timestamp: number } | null =
     null;
   private readonly healthCheckCacheDuration = 30000; // 30 seconds
