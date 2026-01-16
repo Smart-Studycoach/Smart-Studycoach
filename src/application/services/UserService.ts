@@ -48,4 +48,11 @@ export class UserService {
       ? this.userRepository.addEnrolledModule(user_id, module_id)
       : this.userRepository.removeEnrolledModule(user_id, module_id);
   }
+
+  async updateStudentProfile(
+    user_id: string,
+    studentProfile: string
+  ): Promise<boolean> {
+    return this.userRepository.updateStudentProfile(user_id, studentProfile);
+  }
 }

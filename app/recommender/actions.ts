@@ -1,6 +1,8 @@
 "use server";
 
-import { recommendationService } from "@/infrastructure/container";
+import { cookies } from "next/headers";
+import { authService } from "@/infrastructure/container";
+import { recommendationService, userService } from "@/infrastructure/container";
 import { RecommendationDto } from "@/application/dto/RecommendationDto";
 import { RecommendationMapper } from "@/infrastructure/mappers/RecommendationMapper";
 
@@ -15,7 +17,8 @@ export async function submitRecommendation(
   try {
     const interests = formData.get("interests")?.toString()?.trim() ?? "";
     const level = formData.get("level")?.toString() ?? "";
-    const location = formData.get("location")?.toString() ?? "";
+    const locations = formData.getAll("location").map((l) => l.toString());
+    const location = locations.length > 0 ? locations.join(" of ") : "";
     const k = 3;
 
     // Backend validation
@@ -24,6 +27,20 @@ export async function submitRecommendation(
         success: false,
         error: "Interesses moeten minimaal 10 karakters bevatten",
       };
+    }
+
+    // Get user from cookie and update their student profile
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    
+    if (token) {
+      const decoded = authService.verifyToken(token);
+      if (decoded?.userId) {
+        // Update student profile in background (don't await to avoid blocking)
+        userService.updateStudentProfile(decoded.userId, interests).catch((err) => {
+          console.error("Failed to update student profile:", err);
+        });
+      }
     }
 
     const recommendations = await recommendationService.RecommendCourses(

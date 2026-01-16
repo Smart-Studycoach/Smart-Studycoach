@@ -63,7 +63,7 @@ export default function Account() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    if (!confirm("Weet je zeker dat je je account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.")) {
       return;
     }
 
@@ -72,7 +72,7 @@ export default function Account() {
       await authService.deleteAccount();
       window.location.href = "/login";
     } catch (err) {
-      setError("Failed to delete account");
+      setError("Kan account niet verwijderen");
       console.error(err);
     } finally {
       setIsDeleting(false);
@@ -98,7 +98,7 @@ export default function Account() {
     // Client-side email validation before sending to API
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(editedEmail)) {
-      setError("Invalid email format");
+      setError("Ongeldig e-mailformaat");
       return;
     }
 
@@ -116,7 +116,7 @@ export default function Account() {
       });
       setIsEditing(false);
     } catch (err) {
-      setError("Failed to update profile");
+      setError("Kan profiel niet bijwerken");
       console.error(err);
     } finally {
       setIsSaving(false);
@@ -128,49 +128,49 @@ export default function Account() {
     setPasswordSuccess("");
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError("Wachtwoorden komen niet overeen");
       return;
     }
 
     if (newPassword.length < 12) {
-      setPasswordError("Password must be at least 12 characters long");
+      setPasswordError("Wachtwoord moet minstens 12 karakters lang zijn");
       return;
     }
 
     // 12 characters
     if (newPassword.length < 12) {
-      setPasswordError("Password must be at least 12 characters long");
+      setPasswordError("Wachtwoord moet minstens 12 karakters lang zijn");
       return;
     }
     
     // Capital letter
     if (!/[A-Z]/.test(newPassword)) {
-      setPasswordError("Password must contain at least one uppercase letter");
+      setPasswordError("Wachtwoord moet minstens één hoofdletter bevatten");
       return;
     }
     
     // Number
     if (!/[0-9]/.test(newPassword)) {
-      setPasswordError("Password must contain at least one number");
+      setPasswordError("Wachtwoord moet minstens één cijfer bevatten");
       return;
     }
     
     // Special character
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
-      setPasswordError("Password must contain at least one special character");
+      setPasswordError("Wachtwoord moet minstens één speciaal teken bevatten");
       return;
     }
 
     setIsChangingPassword(true);
     try {
       await authService.updatePassword(oldPassword, newPassword);
-      setPasswordSuccess("Password updated successfully");
+      setPasswordSuccess("Wachtwoord succesvol bijgewerkt");
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
       setIsEditingPassword(false);
     } catch (err) {
-      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
+      setPasswordError(err instanceof Error ? err.message : "Kan wachtwoord niet bijwerken");
       console.error(err);
     } finally {
       setIsChangingPassword(false);
@@ -194,7 +194,7 @@ export default function Account() {
 
   return (
     <div>
-      {loading && <p>Loading...</p>}
+      {loading && <p>Laden...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {userProfile && (
@@ -203,18 +203,18 @@ export default function Account() {
             <Card className="py-8">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl">Profile Information</CardTitle>
+                  <CardTitle className="text-2xl">Profielinformatie</CardTitle>
                   {!isEditing ? (
                     <Button variant="outline" size="sm" onClick={handleEdit}>
-                      Edit Profile
+                      Bewerk Profiel
                     </Button>
                   ) : (
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
-                        Cancel
+                        Annuleren
                       </Button>
                       <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                        {isSaving ? "Saving..." : "Save"}
+                        {isSaving ? "Opslaan..." : "Opslaan"}
                       </Button>
                     </div>
                   )}
@@ -222,7 +222,7 @@ export default function Account() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">Naam</Label>
                   {isEditing ? (
                     <Input
                       id="name"
@@ -239,7 +239,7 @@ export default function Account() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">E-mail</Label>
                   {isEditing ? (
                     <Input
                       id="email"
@@ -263,25 +263,25 @@ export default function Account() {
             <Card className="py-8">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl">Change Password</CardTitle>
+                <CardTitle className="text-2xl">Wachtwoord wijzigen</CardTitle>
                 {!isEditingPassword ? (
                   <Button variant="outline" size="sm" onClick={handleEditPassword}>
-                    Edit Password
+                    Bewerk Wachtwoord
                   </Button>
                 ) : (
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleCancelPassword} disabled={isChangingPassword}>
-                      Cancel
+                      Annuleren
                     </Button>
                     <Button size="sm" onClick={handleChangePassword} disabled={isChangingPassword || !oldPassword || !newPassword || !confirmPassword}>
-                      {isChangingPassword ? "Saving..." : "Save"}
+                      {isChangingPassword ? "Opslaan..." : "Opslaan"}
                     </Button>
                   </div>
                 )}
               </div>
               {!isEditingPassword && (
                 <CardDescription>
-                  Update your password to keep your account secure
+                  Wijzig je wachtwoord om je account veilig te houden
                 </CardDescription>
               )}
             </CardHeader>
@@ -295,7 +295,7 @@ export default function Account() {
               {isEditingPassword ? (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="oldPassword">Current Password</Label>
+                    <Label htmlFor="oldPassword">Huidig Wachtwoord</Label>
                     <Input
                       id="oldPassword"
                       type="password"
@@ -305,7 +305,7 @@ export default function Account() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
+                    <Label htmlFor="newPassword">Nieuw Wachtwoord</Label>
                     <Input
                       id="newPassword"
                       type="password"
@@ -314,11 +314,11 @@ export default function Account() {
                       disabled={isChangingPassword}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Must be at least 12 characters with at least one uppercase letter, one number, and one special character
+                      Moet minstens 12 karakters zijn met minimaal één hoofdletter, één cijfer en één speciaal teken
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Label htmlFor="confirmPassword">Bevestig Nieuw Wachtwoord</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -360,17 +360,17 @@ export default function Account() {
 
           <Card className="border-destructive/50 py-8 mt-6">
             <CardHeader>
-              <CardTitle className="text-destructive text-2xl">Danger Zone</CardTitle>
+              <CardTitle className="text-destructive text-2xl">Gevarenzone</CardTitle>
               <CardDescription>
-                Irreversible actions that will affect your account
+                Onomkeerbare acties die je account beïnvloeden
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between rounded-lg border border-border p-4">
                 <div className="space-y-0.5">
-                  <div className="font-medium">Logout</div>
+                  <div className="font-medium">Uitloggen</div>
                   <div className="text-sm text-muted-foreground">
-                    Sign out of your account on this device
+                    Meld je af van je account op dit apparaat
                   </div>
                 </div>
                 <Button
@@ -378,15 +378,15 @@ export default function Account() {
                   onClick={handleLogout}
                   className="ml-4"
                 >
-                  Logout
+                  Uitloggen
                 </Button>
               </div>
 
               <div className="flex items-center justify-between rounded-lg border border-destructive/50 p-4 bg-destructive/5">
                 <div className="space-y-0.5">
-                  <div className="font-medium text-destructive">Delete Account</div>
+                  <div className="font-medium text-destructive">Account Verwijderen</div>
                   <div className="text-sm text-muted-foreground">
-                    Permanently delete your account and all associated data
+                    Verwijder permanent je account en alle bijbehorende gegevens
                   </div>
                 </div>
                 <Button
@@ -395,7 +395,7 @@ export default function Account() {
                   disabled={isDeleting}
                   className="ml-4"
                 >
-                  {isDeleting ? "Deleting..." : "Delete Account"}
+                  {isDeleting ? "Verwijderen..." : "Account Verwijderen"}
                 </Button>
               </div>
             </CardContent>

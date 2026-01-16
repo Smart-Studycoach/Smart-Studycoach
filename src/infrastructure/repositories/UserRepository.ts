@@ -190,4 +190,16 @@ export class UserRepository implements IUserRepository {
     if (!doc) return false;
     return true;
   }
+
+  async updateStudentProfile(
+    user_id: string,
+    studentProfile: string
+  ): Promise<boolean> {
+    await connectToDatabase();
+    const doc = await UserModel.updateOne(
+      { _id: user_id },
+      { $set: { studentProfile } }
+    );
+    return doc.modifiedCount > 0;
+  }
 }

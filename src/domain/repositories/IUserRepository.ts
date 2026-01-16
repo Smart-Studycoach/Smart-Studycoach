@@ -15,4 +15,5 @@ export interface IUserRepository {
   removeEnrolledModule(user_id: string, module_id: number): Promise<boolean>;
   hasFavoritedModule(user_id: string, module_id: number): Promise<boolean>;
   getFavoriteModules(user_id: string): Promise<number[]>;
+  updateStudentProfile(user_id: string, studentProfile: string): Promise<boolean>;
 }
