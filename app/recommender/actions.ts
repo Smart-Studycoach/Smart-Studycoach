@@ -6,7 +6,7 @@ import { RecommendationMapper } from "@/infrastructure/mappers/RecommendationMap
 
 type RecommendationResult =
   | { success: true; data: RecommendationDto[] }
-  | { success: false; error: string };
+  | { success: false; error: string; errorDetails?: { status?: number; body?: string } };
 
 export async function submitRecommendation(
   _: RecommendationResult | null,
@@ -39,6 +39,34 @@ export async function submitRecommendation(
     };
   } catch (error) {
     console.error("Recommendation error:", error);
+    
+    // Check if error has HttpError properties
+    if (error && typeof error === 'object' && 'body' in error && 'status' in error) {
+      const httpError = error as { message: string; status: number; body?: string };
+      
+      // Try to parse the body for a detailed message
+      let detailMessage = httpError.message;
+      if (httpError.body) {
+        try {
+          const bodyData = JSON.parse(httpError.body);
+          if (bodyData.detail) {
+            detailMessage = bodyData.detail;
+          }
+        } catch {
+          // If parsing fails, use the original message
+        }
+      }
+      
+      return {
+        success: false,
+        error: detailMessage,
+        errorDetails: {
+          status: httpError.status,
+          body: httpError.body,
+        },
+      };
+    }
+    
     return {
       success: false,
       error:
