@@ -17,7 +17,7 @@ import { AuthServiceInfrastructure } from "../services/AuthServiceInfrastructure
 // Create repository instances
 
 const userRepository = new UserRepository();
-const moduleRepository = new ModuleRepository(userRepository);
+const moduleRepository = new ModuleRepository();
 const recommendationRepository = new RecommendationRepository();
 
 // Create infrastructure service instances
