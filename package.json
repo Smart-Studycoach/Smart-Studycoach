@@ -19,10 +19,10 @@
     "lucide-react": "^0.561.0",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.5",
-    "next": "16.0.10",
+    "next": "^16.0.10",
     "next-devtools-mcp": "^0.3.10",
-    "react": "19.2.1",
-    "react-dom": "19.2.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
@@ -44,8 +44,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@modelcontextprotocol/sdk": "1.25.2",
-      "undici": "7.18.2"
+      "@modelcontextprotocol/sdk": "^1.25.2",
+      "undici": "^7.18.2"
     }
   }
 }

@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@modelcontextprotocol/sdk': 1.25.2
-  undici: 7.18.2
+  '@modelcontextprotocol/sdk': ^1.25.2
+  undici: ^7.18.2
 
 importers:
 
@@ -40,16 +40,16 @@ importers:
         specifier: ^9.1.5
         version: 9.1.5
       next:
-        specifier: 16.0.10
+        specifier: ^16.0.10
         version: 16.0.10(@babel/core@7.28.6)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       next-devtools-mcp:
         specifier: ^0.3.10
         version: 0.3.10(hono@4.11.5)
       react:
-        specifier: 19.2.1
+        specifier: ^19.2.1
         version: 19.2.1
       react-dom:
-        specifier: 19.2.1
+        specifier: ^19.2.1
         version: 19.2.1(react@19.2.1)
       tailwind-merge:
         specifier: ^3.4.0
