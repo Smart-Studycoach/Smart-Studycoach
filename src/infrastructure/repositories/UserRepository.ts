@@ -80,7 +80,7 @@ export class UserRepository implements IUserRepository {
   async delete(id: string): Promise<boolean> {
     try {
       await connectToDatabase();
-      const result = await UserModel.deleteOne({ _id: id });
+      const result = await UserModel.deleteOne({ _id: { $eq: id } });
       return result.deletedCount === 1;
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -102,8 +102,8 @@ export class UserRepository implements IUserRepository {
   ): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.findOne({
-      _id: user_id,
-      chosenModules: module_id,
+      _id: { $eq: user_id },
+      chosenModules: { $eq: module_id },
     });
     return doc !== null;
   }
@@ -197,7 +197,7 @@ export class UserRepository implements IUserRepository {
   ): Promise<boolean> {
     await connectToDatabase();
     const doc = await UserModel.updateOne(
-      { _id: user_id },
+      { _id: { $eq: user_id } },
       { $set: { studentProfile } }
     );
     return doc.modifiedCount > 0;
